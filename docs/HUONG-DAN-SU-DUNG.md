@@ -57,7 +57,7 @@ git clone https://github.com/huytue3107/huayu-coach.git
 cd huayu-coach
 ```
 
-Kho mã đang ở chế độ **riêng tư**: bạn cần một tài khoản GitHub đã được mời vào kho. Cài `brew install gh`, chạy `gh auth login`, rồi clone như trên hoặc dùng `gh repo clone huytue3107/huayu-coach`. **[CHƯA KIỂM THỬ]**: việc clone kho riêng tư chưa được thử trong lúc soạn tài liệu này.
+Kho mã có thể ở chế độ **riêng tư** hoặc **công khai** (xem ở **Settings** của kho trên GitHub; bạn là người quyết định). Nếu kho đang riêng tư, bạn cần một tài khoản GitHub đã được mời vào kho: cài `brew install gh`, chạy `gh auth login`, rồi clone như trên hoặc dùng `gh repo clone huytue3107/huayu-coach`. **[CHƯA KIỂM THỬ]**: việc clone kho riêng tư chưa được thử trong lúc soạn tài liệu này.
 
 ### 2.3 Khởi động
 
@@ -405,7 +405,7 @@ Hướng dẫn từng bước đầy đủ nằm ở **[`deploy/deploy.md`](../d
 3. **Tường lửa `ufw`**: cho phép SSH trước rồi mới bật; mở 80 và 443.
 4. **Cài Docker**.
 5. **Trỏ tên miền** về VPS: chỉ tạo bản ghi **A** (IPv4) và **đừng tạo bản ghi AAAA (IPv6)** trong đợt thử. Giới hạn tốc độ đăng ký, đăng nhập, quên mật khẩu tính theo địa chỉ IP, và với IPv6 qua Docker ứng dụng có thể thấy mọi người dùng là cùng một địa chỉ, khiến cả nhóm chung một hạn mức (chưa được chạy thử; chi tiết ở mục 5 của `deploy.md`).
-6. **Đưa mã nguồn lên VPS**: có hai cách (chọn một), chi tiết ở mục 6 của `deploy.md`. Cách A: `rsync` từ máy của bạn. Cách B: tạo một khóa SSH trên VPS và thêm khóa công khai vào kho GitHub ở **Settings > Deploy keys** (chỉ đọc), rồi `git clone git@github.com:huytue3107/huayu-coach.git`. Kho là riêng tư nên `git clone` bằng địa chỉ `https://` trên VPS sẽ không chạy. Tệp `.env` **không nằm trong git** (và `rsync` cũng loại nó): bạn tự tạo nó ở bước 7.
+6. **Đưa mã nguồn lên VPS**: có hai cách (chọn một), chi tiết ở mục 6 của `deploy.md`. Cách A: `rsync` từ máy của bạn. Cách B: tạo một khóa SSH trên VPS và thêm khóa công khai vào kho GitHub ở **Settings > Deploy keys** (chỉ đọc), rồi `git clone git@github.com:huytue3107/huayu-coach.git`. Nếu kho riêng tư, `git clone` bằng địa chỉ `https://` trên VPS sẽ không chạy (chỉ cần khóa deploy như trên). Tệp `.env` **không nằm trong git** (và `rsync` cũng loại nó): bạn tự tạo nó ở bước 7.
 7. **Tạo `.env`**: `cp .env.example .env`, rồi `chmod 600 .env`. Tối thiểu: `DOMAIN` (chỉ tên miền, ví dụ `huayu.example.com`: **không** có `https://`, không có dấu `/` hay đường dẫn), `HUAYU_SECRET_KEY`, `HUAYU_SUPPORT_EMAIL`, `HUAYU_INVITE_CODE`, các biến SMTP, và **một quyết định về câu hỏi**: hoặc nhờ giáo viên duyệt câu hỏi trước khi mời sinh viên, hoặc đặt `HUAYU_ALLOW_UNREVIEWED_QUESTIONS=true` cho đợt thử. Nếu không làm một trong hai, ở chế độ chạy thật sinh viên sẽ không có bài tập nào. Nên điền luôn `HUAYU_OPERATOR_NAME`, `HUAYU_OPERATOR_ADDRESS`, `HUAYU_OPERATOR_TAX_ID` (xem [mục 6.5](#65-thông-tin-đơn-vị-vận-hành-trang-privacy-và-terms)).
 8. **Khởi động**:
    ```bash

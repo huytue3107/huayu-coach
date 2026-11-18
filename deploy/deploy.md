@@ -133,7 +133,7 @@ Một lớp học dùng chung một Wi-Fi cũng chung một địa chỉ IP côn
 
 ## 6. Đưa mã nguồn lên VPS **[CHƯA KIỂM THỬ]**
 
-Mã nguồn nằm trong kho GitHub `https://github.com/huytue3107/huayu-coach` (nhánh `main`). Kho này ở chế độ **riêng tư**: người lạ, và cả VPS của bạn, không `git clone https://...` được nếu không có quyền. Có hai cách chạy được; chọn **một** cách và dùng nó cho cả các lần cập nhật sau (mục 11), đừng trộn hai cách trên cùng một thư mục.
+Mã nguồn nằm trong kho GitHub `https://github.com/huytue3107/huayu-coach` (nhánh `main`). Nếu kho ở chế độ **riêng tư** (bạn có thể đổi ở Settings của kho trên GitHub), người lạ, và cả VPS của bạn, không `git clone https://...` được nếu không có quyền. Có hai cách chạy được; chọn **một** cách và dùng nó cho cả các lần cập nhật sau (mục 11), đừng trộn hai cách trên cùng một thư mục.
 
 **Cả hai cách đều không đưa tệp `.env` lên VPS**: `.env` không nằm trong git (`.gitignore` và `.dockerignore` loại nó; kho chỉ có `.env.example`) và lệnh `rsync` dưới đây cũng loại nó. Bạn tự tạo `.env` trên VPS ở mục 7.
 
