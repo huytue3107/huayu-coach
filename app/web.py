@@ -91,7 +91,9 @@ def render(request: Request, template: str, context: dict[str, Any] | None = Non
         "languages": [(code, i18n.LANGUAGE_NAMES[code]) for code in LOCALES],
         "flash": {"level": flash["level"], "text": i18n.t(locale, flash["key"], **flash["params"])} if flash else None,
         "app": {"name": "華語教練 Huayu Coach", "billing_enabled": settings.billing_enabled,
-                "support_email": settings.support_email, "env": settings.env},
+                "support_email": settings.support_email, "env": settings.env,
+                "operator_name": settings.operator_name, "operator_address": settings.operator_address,
+                "operator_tax_id": settings.operator_tax_id},
         "path": request.url.path,
         **(context or {}),
     }

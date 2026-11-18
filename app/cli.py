@@ -1,7 +1,7 @@
 """Command line: `python -m app.cli <command>`.
 
   prepare        apply database migrations + load reference data (idempotent; run on every start/deploy)
-  create-admin   create or promote an administrator (password from --password, HUAYU_ADMIN_PASSWORD, or a prompt)
+  create-admin   create an administrator, or promote an existing account WITHOUT changing its password (--reset-password to change it)
   demo           DEV ONLY: sample learner/teacher/admin with study history so every screen has something to show
   check          print the effective configuration (secrets hidden) and verify the database is reachable
   delete-user    erase an account on request (same code path as the in-app delete button)
@@ -74,19 +74,24 @@ def _read_password(args: argparse.Namespace) -> str:
 
 
 def cmd_create_admin(args: argparse.Namespace) -> int:
+    """New e-mail: create the admin (asks for a password). Existing account: promote it and leave its password alone,
+    unless --reset-password is given (a promotion must not lock the person out or hand them a different password)."""
     email = args.email.strip().lower()
-    pw = _read_password(args)
     dbmod.init_db()
+    with dbmod.read_session() as s:
+        exists = s.scalar(select(User.id).where(User.email == email)) is not None
+    pw = _read_password(args) if (not exists or args.reset_password) else None  # prompt BEFORE taking the write lock
     with dbmod.write_session() as s:
         user = s.scalar(select(User).where(User.email == email))
         if user:
-            user.role, user.password_hash = "admin", hash_password(pw)
-            user.session_version += 1
-            print(f"promoted existing account {email} to admin")
+            user.role = "admin"
+            if pw:
+                user.password_hash = hash_password(pw)
+                user.session_version += 1  # a new password logs the person out everywhere
+            print(f"promoted existing account {email} to admin" + (" and set a new password" if pw else " (password unchanged)"))
         else:
-            user = User(email=email, password_hash=hash_password(pw), role="admin", locale=get_settings().default_locale,
-                        onboarded_at=utcnow())
-            s.add(user)
+            s.add(User(email=email, password_hash=hash_password(pw), role="admin", locale=get_settings().default_locale,
+                       onboarded_at=utcnow()))
             print(f"created admin {email}")
     return 0
 
@@ -172,7 +177,8 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("prepare").set_defaults(fn=cmd_prepare)
     a = sub.add_parser("create-admin")
     a.add_argument("--email", required=True)
-    a.add_argument("--password")
+    a.add_argument("--password", help="avoid: it stays in your shell history. Prefer the prompt or HUAYU_ADMIN_PASSWORD")
+    a.add_argument("--reset-password", action="store_true", help="for an EXISTING account: also set a new password")
     a.set_defaults(fn=cmd_create_admin)
     sub.add_parser("demo").set_defaults(fn=cmd_demo)
     sub.add_parser("check").set_defaults(fn=cmd_check)

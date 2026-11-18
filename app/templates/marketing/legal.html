@@ -16,9 +16,9 @@
   <section class="card stack" aria-labelledby="operator">
     <h2 id="operator">{{ t('marketing.legal.operator_title') }}</h2>
     <dl class="operator">
-      <dt>{{ t('marketing.legal.operator_name_label') }}</dt><dd><span class="placeholder">{{ t('marketing.legal.operator_name') }}</span></dd>
-      <dt>{{ t('marketing.legal.operator_address_label') }}</dt><dd><span class="placeholder">{{ t('marketing.legal.operator_address') }}</span></dd>
-      <dt>{{ langs(t('marketing.legal.operator_tax_label'), [('統一編號', 'zh-TW')]) }}</dt><dd><span class="placeholder">{{ t('marketing.legal.operator_tax') }}</span></dd>
+      <dt>{{ t('marketing.legal.operator_name_label') }}</dt><dd>{% if app.operator_name %}{{ app.operator_name }}{% else %}<span class="placeholder">{{ t('marketing.legal.operator_name') }}</span>{% endif %}</dd>
+      <dt>{{ t('marketing.legal.operator_address_label') }}</dt><dd>{% if app.operator_address %}{{ app.operator_address }}{% else %}<span class="placeholder">{{ t('marketing.legal.operator_address') }}</span>{% endif %}</dd>
+      <dt>{{ langs(t('marketing.legal.operator_tax_label'), [('統一編號', 'zh-TW')]) }}</dt><dd>{% if app.operator_tax_id %}{{ app.operator_tax_id }}{% else %}<span class="placeholder">{{ t('marketing.legal.operator_tax') }}</span>{% endif %}</dd>
     </dl>
   </section>
 

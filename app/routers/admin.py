@@ -23,13 +23,13 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Request
 from fastapi import UploadFile as FormUpload
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import Response
-from sqlalchemy import func, or_, select
+from sqlalchemy import delete, func, or_, select
 from sqlalchemy.orm import Session
 from starlette.datastructures import UploadFile
 
 from ..config import get_settings
 from ..db import get_db, get_wdb
-from ..models import AuditLog, BillingPlan, Interruption, Payment, Question, Subscription, User
+from ..models import AuditLog, BillingPlan, Interruption, Payment, Question, QuizAttempt, Subscription, User
 from ..services import admin_stats, billing
 from ..timeutil import utcnow
 from .. import web as _web
@@ -601,7 +601,9 @@ def user_reset_placement(uid: int, db: Session = Depends(get_wdb), admin: User =
     if target.role != "learner":
         return _back_to_user(uid, "admin.flash.err_not_learner", "error")
     target.pretest_done_at, target.level = None, None
-    _audit(db, admin, "placement_reset", target.public_id, {})
+    # the old placement answers go too, otherwise the learner would only be asked the questions they never saw
+    removed = db.execute(delete(QuizAttempt).where(QuizAttempt.user_id == target.id, QuizAttempt.stage == "pretest")).rowcount
+    _audit(db, admin, "placement_reset", target.public_id, {"answers_removed": removed})
     db.commit()
     return _back_to_user(uid, "admin.flash.placement_reset")
 

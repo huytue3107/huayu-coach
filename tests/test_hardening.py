@@ -364,3 +364,55 @@ def test_production_start_warns_about_missing_contact_mail_and_content(engine, m
     dbmod.init_db()
     text = " ".join(cli.config_warnings())
     assert "HUAYU_SUPPORT_EMAIL" in text and "HUAYU_SMTP_HOST" in text and "approved" in text
+
+
+# ----------------------------------------------------------------------------- guide verification findings
+def test_create_admin_never_changes_the_password_of_an_existing_account(engine, monkeypatch):
+    from app import cli
+    from app.security import hash_password, verify_password
+    monkeypatch.setenv("HUAYU_DATABASE_URL", engine.url.render_as_string(hide_password=False))
+    get_settings.cache_clear()
+    with dbmod.write_session() as s:
+        learner = make_user(s, email="promote@example.com")
+        learner.password_hash = hash_password("original-password-1")
+        version = learner.session_version
+    assert cli.main(["create-admin", "--email", "Promote@Example.com"]) == 0  # no prompt, no password needed
+    with dbmod.read_session() as s:
+        u = s.query(models.User).filter_by(email="promote@example.com").one()
+        assert u.role == "admin" and verify_password("original-password-1", u.password_hash) and u.session_version == version
+    monkeypatch.setenv("HUAYU_ADMIN_PASSWORD", "a-brand-new-password-2")
+    assert cli.main(["create-admin", "--email", "promote@example.com", "--reset-password"]) == 0
+    with dbmod.read_session() as s:
+        u = s.query(models.User).filter_by(email="promote@example.com").one()
+        assert verify_password("a-brand-new-password-2", u.password_hash) and u.session_version == version + 1
+    assert cli.main(["create-admin", "--email", "fresh@example.com"]) == 0  # a NEW address still needs and uses the password
+    with dbmod.read_session() as s:
+        assert verify_password("a-brand-new-password-2", s.query(models.User).filter_by(email="fresh@example.com").one().password_hash)
+
+
+def test_allowing_a_retake_removes_the_old_placement_answers(client):
+    from tests.conftest import add_attempt
+    with dbmod.write_session() as s:
+        admin, learner = make_user(s, role="admin"), make_user(s)
+        learner.level = "A1"
+        add_attempt(s, learner, "Q001", correct=True, stage="pretest", skill="vocab")
+        add_attempt(s, learner, "Q002", correct=False, stage="daily")
+        lid = learner.id
+    token = login_as(client, admin)
+    assert client.post(f"/admin/users/{lid}/reset-placement", data={"csrf": token}).status_code == 303
+    with dbmod.read_session() as s:
+        u = s.get(models.User, lid)
+        stages = sorted(a.stage for a in s.query(models.QuizAttempt).filter_by(user_id=lid))
+        assert u.level is None and u.pretest_done_at is None
+        assert stages == ["daily"]  # only the placement answers were removed; daily practice history stays
+
+
+def test_operator_details_come_from_settings_not_from_code(client, monkeypatch):
+    page = client.get("/privacy", headers={"accept-language": "en"}).text
+    assert "OPERATOR NAME" in page  # visible placeholder while unset
+    monkeypatch.setenv("HUAYU_OPERATOR_NAME", "Huayu Learning Co., Ltd.")
+    monkeypatch.setenv("HUAYU_OPERATOR_ADDRESS", "No. 1 Example Rd, Kaohsiung")
+    monkeypatch.setenv("HUAYU_OPERATOR_TAX_ID", "12345678")
+    get_settings.cache_clear()
+    page = client.get("/privacy", headers={"accept-language": "en"}).text
+    assert "Huayu Learning Co., Ltd." in page and "12345678" in page and "OPERATOR NAME" not in page

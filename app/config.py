@@ -39,6 +39,9 @@ class Settings(BaseSettings):
     trial_days: int = 14
     payment_instructions: str = ""
     support_email: str = ""
+    operator_name: str = ""      # shown on /privacy and /terms; when empty a visible placeholder is shown
+    operator_address: str = ""
+    operator_tax_id: str = ""     # 統一編號
 
     # optional AI explanations
     llm_provider: Literal["none", "openai", "anthropic"] = "none"

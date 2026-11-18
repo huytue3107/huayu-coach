@@ -129,18 +129,49 @@ Tạo bản ghi DNS **A**: `huayu.example.com` trỏ tới IPv4 của VPS. Kiể
 
 **Đừng tạo bản ghi AAAA (IPv6) trong đợt thử.** Giới hạn tốc độ đăng ký, đăng nhập và quên mật khẩu tính theo địa chỉ IP của người truy cập. Theo tài liệu của Docker, khi một cổng được công bố ra cả IPv6 mà mạng của container chỉ có IPv4 (đúng với cấu hình này), kết nối IPv6 có thể đi qua một tiến trình trung gian và ứng dụng sẽ thấy **mọi người dùng IPv6 là cùng một địa chỉ**: cả nhóm cùng dùng chung một hạn mức và có thể khóa nhau. Điều này chưa được chạy thử ở đây. Không có bản ghi AAAA thì không ai kết nối bằng IPv6, và người dùng mạng chỉ có IPv6 (di động) thường vẫn vào được nhờ cơ chế chuyển đổi NAT64/464XLAT của nhà mạng. Chỉ bật IPv6 sau khi bạn tự kiểm chứng ứng dụng thấy địa chỉ thật của người truy cập.
 
-Một lớp học dùng chung một Wi-Fi cũng chung một địa chỉ IP công cộng, nên cùng chia sẻ hạn mức đăng ký theo IP (xem `app/routers/auth.py`). Nếu cả lớp đăng ký cùng lúc mà bị báo "quá nhiều lần thử" (429), cho các em đăng ký rải ra, hoặc `docker compose restart app` để xóa bộ đếm (bộ đếm nằm trong bộ nhớ và mất khi khởi động lại).
+Một lớp học dùng chung một Wi-Fi cũng chung một địa chỉ IP công cộng, nên cùng chia sẻ hạn mức đăng ký theo IP (xem `app/routers/auth.py`). Nếu cả lớp đăng ký cùng lúc mà bị báo "Thao tác quá nhanh" (lỗi 429), cho các em đăng ký rải ra, hoặc `docker compose restart app` để xóa bộ đếm (bộ đếm nằm trong bộ nhớ và mất khi khởi động lại).
 
 ## 6. Đưa mã nguồn lên VPS **[CHƯA KIỂM THỬ]**
 
-Cách đơn giản từ Mac (không cần git server), chạy trong thư mục dự án:
+Mã nguồn nằm trong kho GitHub `https://github.com/huytue3107/huayu-coach` (nhánh `main`). Kho này ở chế độ **riêng tư**: người lạ, và cả VPS của bạn, không `git clone https://...` được nếu không có quyền. Có hai cách chạy được; chọn **một** cách và dùng nó cho cả các lần cập nhật sau (mục 11), đừng trộn hai cách trên cùng một thư mục.
+
+**Cả hai cách đều không đưa tệp `.env` lên VPS**: `.env` không nằm trong git (`.gitignore` và `.dockerignore` loại nó; kho chỉ có `.env.example`) và lệnh `rsync` dưới đây cũng loại nó. Bạn tự tạo `.env` trên VPS ở mục 7.
+
+### Cách A: `rsync` từ Mac (không cần cấp quyền gì cho VPS)
+
+Chạy trong thư mục dự án trên Mac:
 
 ```bash
-rsync -av --delete --exclude .venv --exclude data --exclude .env --exclude '.pytest_cache' --exclude '__pycache__' \
+rsync -av --delete --exclude .git --exclude .venv --exclude data --exclude .env --exclude '.pytest_cache' --exclude '__pycache__' \
   ./ deploy@IP_CUA_VPS:~/huayu-coach/
 ```
 
-(`--exclude .env` và `--exclude data` để không ghi đè cấu hình và dữ liệu thật trên VPS.) `--delete` xóa trên VPS mọi tệp không còn trên Mac, nên **bản mã cũ không còn trên VPS sau lệnh này**: mục 11 nói cách giữ lại bản cũ trước khi chạy lại lệnh này. Dự án trên Mac hiện chưa dùng git; nếu muốn, chạy `git init` một lần rồi `git add -A && git commit` và `git tag` mỗi lần phát hành (tệp `.gitignore` đã loại `.env` và dữ liệu).
+(`--exclude .env` và `--exclude data` để không ghi đè cấu hình và dữ liệu thật trên VPS; `--exclude .git` để không chép lịch sử git lên VPS.) `--delete` xóa trên VPS mọi tệp không còn trên Mac, nên **bản mã cũ không còn trên VPS sau lệnh này**: mục 11 nói cách giữ lại bản cũ trước khi chạy lại lệnh này. Cách này lấy đúng những gì đang có trong thư mục trên Mac, kể cả thay đổi chưa commit.
+
+### Cách B: khóa triển khai (deploy key) chỉ đọc, rồi `git clone` trên VPS
+
+Khóa triển khai là một khóa SSH chỉ có quyền **đọc một kho duy nhất**. Làm trên VPS bằng người dùng `deploy`:
+
+1. Tạo khóa (không đặt cụm mật khẩu, để `git pull` chạy được không cần người gõ; rủi ro thấp vì khóa chỉ đọc một kho) và in khóa công khai ra:
+
+   ```bash
+   ssh-keygen -t ed25519 -N "" -C "huayu-coach-vps"
+   cat ~/.ssh/id_ed25519.pub
+   ```
+
+   Nếu `ssh-keygen` hỏi có ghi đè tệp `id_ed25519` đã có không, trả lời `n` (VPS đã có khóa; dùng luôn khóa đó, lệnh `cat` vẫn đúng).
+
+2. Trên GitHub, bằng trình duyệt, đăng nhập tài khoản chủ kho: mở kho `huytue3107/huayu-coach`, vào **Settings** > **Deploy keys** > **Add deploy key**. Đặt tên (ví dụ `vps`), dán nguyên dòng khóa công khai ở bước 1, **không** đánh dấu "Allow write access" (để khóa chỉ đọc), bấm **Add key**.
+3. Thử kết nối (trên VPS): `ssh -T git@github.com`. Lần đầu, ssh hỏi có tin máy chủ `github.com` không (`Are you sure you want to continue connecting`): đối chiếu dấu vân tay hiện ra với danh sách trong tài liệu của GitHub ("GitHub's SSH key fingerprints") rồi mới gõ `yes`. Kết quả đúng là một dòng chào có chữ `successfully authenticated` (GitHub không cấp shell, nên lệnh này không mở phiên nào; đó là bình thường).
+4. Lấy mã:
+
+   ```bash
+   cd ~
+   git clone git@github.com:huytue3107/huayu-coach.git
+   cd huayu-coach
+   ```
+
+Lưu ý cho cách B: (a) VPS chỉ nhận được những gì đã **commit và `git push`** lên GitHub, thay đổi chưa đẩy lên trên Mac sẽ không tới VPS. (b) Muốn biết VPS đang chạy bản nào: `git log -1 --oneline`. (c) Cập nhật sau này là `git pull` (mục 11, bước 4). (d) Nếu nghi VPS bị lộ, xóa khóa ở **Settings** > **Deploy keys** của kho. (e) Cách B chưa được chạy thử; các bước GitHub ở trên dựa trên giao diện và tài liệu của GitHub, không phải trên lần thử thật.
 
 ## 7. Tạo tệp `.env` **[CHƯA KIỂM THỬ]**
 
@@ -163,6 +194,10 @@ HUAYU_SECRET_KEY=dán-khóa-vừa-tạo-vào-đây
 HUAYU_SUPPORT_EMAIL=ban@example.com
 # Khuyên dùng: chỉ người có mã mới đăng ký được
 HUAYU_INVITE_CODE=mã-mời-bí-mật-cho-đợt-thử
+# Đơn vị vận hành, hiện trên /privacy và /terms (để trống thì trang còn ô vàng giữ chỗ). Giá trị có dấu cách đặt trong nháy kép.
+HUAYU_OPERATOR_NAME="Tên đơn vị vận hành"
+HUAYU_OPERATOR_ADDRESS="Địa chỉ đơn vị vận hành"
+HUAYU_OPERATOR_TAX_ID=ma-so-thue
 # Miễn phí trong giai đoạn thử nghiệm
 HUAYU_BILLING_ENABLED=false
 # Xem cảnh báo bên dưới
@@ -179,7 +214,7 @@ HUAYU_SMTP_FROM=ban@example.com
 Những điểm dễ sai:
 
 - **Nháy đơn cho giá trị có `$` hoặc `#`** (mật khẩu SMTP, mã mời). Docker Compose mở rộng `$...` trong giá trị không có nháy hoặc có nháy kép, nên mật khẩu như `abc$def` sẽ bị đổi âm thầm; trong nháy đơn thì giữ nguyên. Một giá trị có ` #` (dấu cách rồi dấu #) cũng bị cắt cụt nếu không có nháy.
-- `DOMAIN` chỉ là tên miền. Nếu bạn ghi `DOMAIN=https://huayu.example.com`, địa chỉ công khai thành `https://https://...` và liên kết đặt lại mật khẩu trong thư bị hỏng. Mục 8 có lệnh kiểm tra.
+- `DOMAIN` chỉ là tên miền. Nếu bạn ghi `DOMAIN=https://huayu.example.com`, địa chỉ công khai thành `https://https://...`, ở chế độ prod cấu hình đó bị từ chối và `app` **không khởi động** (`docker compose logs app` ghi `Invalid configuration: HUAYU_BASE_URL must look like https://your.domain`), container cứ khởi động lại. Sửa `.env` rồi `docker compose up -d` (mục 8 có bảng lỗi).
 - `HUAYU_SECRET_KEY` phải dài từ 32 ký tự. Nếu thiếu hoặc ngắn, ứng dụng **từ chối khởi động** (vòng lặp khởi động lại, xem `docker compose logs app`). **Đừng đổi khóa này sau khi đã có người dùng**: mọi người sẽ bị đăng xuất. Bản sao lưu cơ sở dữ liệu **không chứa** `.env`: hãy lưu một bản `.env` ở nơi an toàn (ví dụ trình quản lý mật khẩu).
 - `compose.yml` tự đặt `HUAYU_ENV=prod`, `HUAYU_DATA_DIR=/data`, `HUAYU_TRUSTED_PROXY=true` và `HUAYU_BASE_URL=https://` + `DOMAIN`, nên dòng `HUAYU_ENV=dev` còn sót từ `.env.example` không làm bản chạy thật rơi vào chế độ dev.
 - **Câu hỏi chưa được giáo viên duyệt:** trong chế độ prod, mặc định ứng dụng **chỉ phục vụ câu hỏi đã được duyệt** (`approved`). Bộ 50 câu hỏi nạp sẵn đều đang ở trạng thái `pending_review` hoặc `needs_edit`, nên nếu không làm gì, sinh viên sẽ **không có câu nào để làm**. Chọn một trong hai: (a) nhờ giáo viên duyệt câu hỏi ở `/admin/questions` trước khi mời sinh viên; hoặc (b) đặt `HUAYU_ALLOW_UNREVIEWED_QUESTIONS=true` cho giai đoạn thử nghiệm. Trang chủ tự nói đúng tình trạng này cho sinh viên ("một số câu chưa được rà soát").
@@ -211,7 +246,7 @@ Nếu lỗi:
 | Trình duyệt báo chứng chỉ lỗi / không vào được | DNS chưa trỏ đúng, cổng 80/443 bị chặn (ufw hoặc tường lửa của nhà cung cấp VPS); xem `docker compose logs caddy` |
 | 502 Bad Gateway | `app` chưa healthy hoặc bị lỗi; xem `docker compose ps` và log của `app` |
 | `DOMAIN` báo "Set DOMAIN=..." | Thiếu `DOMAIN=` trong `.env` |
-| `base_url=https://https://...` | `DOMAIN` có ghi `https://`: sửa `.env` rồi `docker compose up -d` |
+| `app` cứ khởi động lại và log có `HUAYU_BASE_URL must look like https://your.domain` | `DOMAIN` có ghi `https://` (thành `https://https://...`): ứng dụng từ chối khởi động. Sửa `.env` rồi `docker compose up -d` |
 | Caddy báo lỗi đọc `Caddyfile` | `docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile` cho biết dòng lỗi |
 
 ## 9. Tạo quản trị viên đầu tiên **[CHƯA KIỂM THỬ]**
@@ -242,7 +277,7 @@ BACKUP_PING_URL=https://hc-ping.com/UUID-CUA-BAN
 
 - `backup.sh` thoát với mã khác 0 khi lỗi (container không chạy, hết đĩa, tệp ra không phải SQLite). Lỗi được in ra stderr; dòng cron trên chỉ chuyển stdout vào `backup.log`, nên cron sẽ gửi thư (`MAILTO`) **chỉ khi có lỗi**. Lưu ý: `MAILTO` chỉ hoạt động nếu VPS có sẵn chương trình gửi thư (MTA); VPS mới thường **không có**, nên đừng chỉ dựa vào nó.
 - **Cách báo lỗi đáng tin hơn (tùy chọn): `BACKUP_PING_URL`.** Tạo một "check" miễn phí kiểu [healthchecks.io](https://healthchecks.io) (chu kỳ 1 ngày, thời gian chờ thêm 2 giờ), dán địa chỉ ping vào dòng `BACKUP_PING_URL=` ở trên. `backup.sh` gọi địa chỉ đó sau mỗi bản sao lưu thành công và gọi `<địa chỉ>/fail` khi lỗi. Nếu tín hiệu ngừng đến (cron chết, VPS tắt, hết đĩa), dịch vụ gửi email cho bạn. Việc ping lỗi không làm hỏng bản sao lưu. Biến không đặt thì không ping.
-- **Thử khôi phục ít nhất một lần** trên VPS thử trước khi có dữ liệu thật (mục 10.5).
+- **Thử khôi phục ít nhất một lần** trên VPS thử trước khi có dữ liệu thật (mục 10.5). `restore.sh` không có chế độ "thử vào thư mục khác": nó **thay cơ sở dữ liệu thật**, nên đừng chạy nó để "thử" trên máy đang có sinh viên. Cách thử không đụng tới dữ liệu thật (chỉ kiểm tra bản sao lưu) nằm ở mục 10.5.
 
 ### 10.2 Bản sao lưu có gì và không có gì
 
@@ -254,11 +289,11 @@ Trang `/privacy` hứa bản sao lưu được thay sau 14 ngày và nhật ký 
 
 | Nơi | Giữ bao lâu |
 |---|---|
-| Cơ sở dữ liệu đang chạy | Khi người dùng xóa tài khoản, mọi dòng của họ bị xóa ngay khỏi cơ sở dữ liệu (chỉ còn một dòng nhật ký có mã ẩn danh và các bản ghi thanh toán đã tách khỏi tài khoản). SQLite mặc định **không ghi đè ngay các byte đã giải phóng** trong tệp trên đĩa; chúng bị ghi đè dần khi có dữ liệu mới. |
+| Cơ sở dữ liệu đang chạy | Khi người dùng xóa tài khoản (ở Cài đặt, hoặc bạn chạy `python -m app.cli delete-user` theo yêu cầu qua email), mọi dòng của họ bị xóa ngay khỏi cơ sở dữ liệu (chỉ còn các dòng nhật ký đã ẩn danh hóa, trong đó có một dòng account_deleted, và các bản ghi thanh toán đã tách khỏi tài khoản). SQLite mặc định **không ghi đè ngay các byte đã giải phóng** trong tệp trên đĩa; chúng bị ghi đè dần khi có dữ liệu mới. |
 | Bản sao lưu trên VPS (`~/huayu-backups/huayu-*.db.gz`) | `backup.sh` giữ `KEEP` **tệp** mới nhất, mặc định 14. Với cron hằng ngày, **một tài khoản đã xóa còn trong các bản sao lưu làm trước lúc xóa tối đa 14 ngày** sau lúc xóa. Tệp cũ chỉ bị xóa khi một bản mới được tạo **thành công**: nếu cron ngừng chạy, bản cũ ở lại lâu hơn (đó là lý do cần báo lỗi ở mục 10.1). Bản sao lưu thủ công cũng tính vào 14 tệp, nên chỉ làm bản cũ rơi ra sớm hơn. Nếu bạn đổi `KEEP`, sửa câu "14" trong `app/locales/*/marketing.json` (khóa `privacy.s2_p2` và `privacy.s7_p3`). |
 | Bản chép ngoài VPS | **Do bạn chịu trách nhiệm**; `backup.sh` không động tới chúng. Xem 10.4. |
 | `huayu.db.before-restore-*` trong volume dữ liệu | **Mãi mãi cho đến khi bạn xóa tay.** Đó là bản đầy đủ của cơ sở dữ liệu trước lần khôi phục. Giữ nó cho đến khi bạn đối chiếu xong tài khoản bị khôi phục lại (10.5) rồi xóa. |
-| `/data/outbox/*.txt` | **Mãi mãi cho đến khi bạn xóa tay**, và xóa tài khoản **không** xóa chúng. Chỉ có khi chưa cấu hình SMTP; đã cấu hình SMTP thì thư mục này không nhận thư mới. Có tệp cũ thì xóa: `docker compose exec app sh -c 'rm -f /data/outbox/*.txt'`. |
+| `/data/outbox/*.txt` | **Mãi mãi cho đến khi bạn xóa tay.** Xóa tài khoản (ở Cài đặt hoặc bằng `delete-user`) xóa các tệp của đúng địa chỉ email đó; tệp của các địa chỉ khác ở lại. Chỉ có khi chưa cấu hình SMTP; đã cấu hình SMTP thì thư mục này không nhận thư mới. Có tệp cũ thì xóa: `docker compose exec app sh -c 'rm -f /data/outbox/*.txt'`. |
 | Nhật ký Docker (`app`, `caddy`) | Không có dòng cho từng yêu cầu và không có địa chỉ IP của người truy cập (access log của app và của Caddy đều tắt); chỉ có dòng khởi động và thông báo lỗi. Xoay vòng **theo dung lượng**: tối đa 5 tệp x 10 MB = 50 MB mỗi dịch vụ, **không theo thời gian**; nhật ký mất khi container bị tạo lại (mỗi lần `docker compose up -d --build`). Nhật ký lỗi có thể chứa traceback: đừng dán chúng lên nơi công cộng. |
 
 Khi VPS bị hỏng hoặc bạn bỏ VPS, **xóa VPS ở nhà cung cấp cũng là xóa dữ liệu**; đừng để lại ảnh đĩa/snapshot.
@@ -295,9 +330,31 @@ for public_id, email in sqlite3.connect("/data/huayu.db").execute("SELECT public
 PY
 ```
 
-Với mỗi dòng in ra, người đó đã yêu cầu xóa dữ liệu nhưng nay tài khoản đang tồn tại lại. **Hiện chưa có lệnh quản trị để xóa một tài khoản**: chỉ chủ tài khoản xóa được, ở Cài đặt. Hãy liên hệ họ, giải thích và nhờ họ xóa lại. Lệnh liệt kê chỉ so với bản `before-restore` **mới nhất**, nên chạy ngay sau mỗi lần khôi phục.
+Với mỗi dòng in ra, người đó đã yêu cầu xóa dữ liệu nhưng nay tài khoản đang tồn tại lại. Bạn xóa lại giúp họ bằng lệnh quản trị `delete-user` (cùng đường xử lý với nút xóa trong Cài đặt: xóa mọi dữ liệu học của người đó, giữ lại các bản ghi thanh toán đã tách khỏi tài khoản):
+
+```bash
+docker compose exec app python -m app.cli delete-user --email EMAIL      # hỏi gõ DELETE (chữ hoa) để xác nhận; thêm --yes để bỏ câu hỏi
+```
+
+Lệnh từ chối xóa quản trị viên duy nhất (tạo quản trị viên khác trước). Nên báo cho người đó biết tài khoản đã được xóa lại. Lệnh liệt kê ở trên chỉ so với bản `before-restore` **mới nhất**, nên chạy ngay sau mỗi lần khôi phục.
 
 Sau khi mọi thứ ổn, xóa bản `before-restore` (chứa dữ liệu cá nhân): `docker compose exec app ls -la /data` để xem, rồi `docker compose exec app sh -c 'rm -f /data/huayu.db.before-restore-*'`.
+
+**Thử khôi phục mà không đụng tới dữ liệu thật.** `restore.sh` không có tùy chọn khôi phục vào một thư mục thử: nó luôn dừng `app` và thay cơ sở dữ liệu thật trong volume `huayu-data`. Vì vậy chỉ có hai cách thử thật sự:
+
+1. **Trên một VPS thử (hoặc trước khi có dữ liệu thật):** chạy đúng lệnh `./deploy/restore.sh ...` ở đầu mục này. Đây là cách duy nhất thử cả quy trình Docker (dừng `app`, thay cơ sở dữ liệu, bật lại, chờ khỏe).
+2. **Trên chính VPS đang chạy, chỉ để kiểm tra rằng bản sao lưu khôi phục được:** `deploy/restore_db.py` chỉ cần `python3` có sẵn trên VPS. Nó đọc bản sao lưu đã giải nén từ đầu vào chuẩn và ghi vào thư mục trong biến `HUAYU_DATA_DIR`. Nó **không có tùy chọn `--help`** và biến này mặc định là `/data` (nơi dữ liệu thật nằm trong container), nên **luôn đặt `HUAYU_DATA_DIR` sang một thư mục thử** như dưới đây:
+
+   ```bash
+   cd ~/huayu-coach
+   mkdir -m 700 ~/restore-test
+   gunzip -c ~/huayu-backups/huayu-AAAAMMDD-HHMMSS.db.gz | HUAYU_DATA_DIR=$HOME/restore-test python3 deploy/restore_db.py
+   # kết quả đúng: restored /home/deploy/restore-test/huayu.db (migration revision ...)
+   python3 -c "import os, sqlite3; print(sqlite3.connect(os.path.expanduser('~/restore-test/huayu.db')).execute('SELECT COUNT(*) FROM users').fetchone())"
+   rm -r ~/restore-test      # thư mục này chứa dữ liệu cá nhân: xóa ngay khi xong
+   ```
+
+   Cách này kiểm tra tệp sao lưu (toàn vẹn SQLite, có các bảng của Huayu, có số phiên bản migration) và cho bạn đếm số dòng, nhưng **không chạy ứng dụng và không thử Docker**. Nó đã được chạy trên máy phát triển (Mac) với một bản sao lưu do `backup_db.py` tạo; **chưa chạy trên VPS**.
 
 ### 10.6 Không bao giờ chạy trên máy thật
 
@@ -315,7 +372,7 @@ Mỗi lần cập nhật làm đủ các bước sau **theo thứ tự**; mục 
 
 1. Trên Mac: chạy test (`.venv/bin/python -m pytest`). Xem `migrations/versions/` có tệp mới không: nếu có, bản này **đổi cấu trúc cơ sở dữ liệu**, quay lui sẽ phải khôi phục dữ liệu (mục 12, trường hợp B).
 2. Trên VPS, **sao lưu trước**: `cd ~/huayu-coach && ./deploy/backup.sh`. Dòng "backup written: ..." cho biết tên tệp: đó là **bản "trước khi cập nhật"**, ghi nó lại.
-3. **Giữ ảnh Docker đang chạy** bằng một thẻ riêng (trước khi build ảnh mới, vì `docker compose up --build` chuyển thẻ `latest` sang ảnh mới), và giữ luôn mã nguồn đang chạy:
+3. **Giữ image Docker đang chạy** bằng một thẻ riêng (trước khi build image mới, vì `docker compose up --build` chuyển thẻ `latest` sang image mới), và giữ luôn mã nguồn đang chạy:
 
    ```bash
    docker tag huayu-coach:latest huayu-coach:before-$(date +%Y%m%d-%H%M)
@@ -323,7 +380,7 @@ Mỗi lần cập nhật làm đủ các bước sau **theo thứ tự**; mục 
    mkdir -p ~/releases && tar czf ~/releases/huayu-code-$(date +%Y%m%d-%H%M).tgz --exclude=.env --exclude=.venv --exclude=data -C ~ huayu-coach
    ```
 
-4. Đưa mã mới lên (lặp lại lệnh `rsync` ở mục 6, hoặc `git pull`).
+4. Đưa mã mới lên theo cách bạn đã chọn ở mục 6: cách A thì chạy lại lệnh `rsync` trên Mac; cách B thì `cd ~/huayu-coach && git pull` trên VPS (nhớ là Mac phải đã `git push`).
 5. `docker compose up -d --build` (migration tự chạy khi khởi động; vài giây ngừng phục vụ).
 6. Kiểm tra `curl -sS https://huayu.example.com/healthz`, `docker compose logs --tail 50 app`, `docker compose exec app python -m app.cli check`, rồi đăng nhập thử.
 7. **Đừng dọn ngay.** Sau vài ngày chạy ổn, xóa bớt thẻ cũ, chỉ giữ 2 đến 3 thẻ `before-...` gần nhất: `docker rmi huayu-coach:before-AAAAMMDD-HHMM`; xóa bớt `~/releases/*.tgz` cũ. `docker image prune -f` chỉ xóa ảnh **không có thẻ**, nên không động tới các thẻ `before-...`; còn `docker image prune -a` thì **xóa mất chúng**: đừng chạy.
@@ -332,7 +389,7 @@ Mỗi lần cập nhật làm đủ các bước sau **theo thứ tự**; mục 
 
 Migration chỉ đi tới (không có đường quay lại). Mã cũ chạy trên cơ sở dữ liệu đã lên phiên bản mới sẽ **không khởi động** (`prepare` báo `Can't locate revision`). Vì vậy quay lui có hai trường hợp.
 
-**Trường hợp A: bản mới không đổi cấu trúc cơ sở dữ liệu** (không có tệp mới trong `migrations/versions/`): chỉ cần đổi ảnh.
+**Trường hợp A: bản mới không đổi cấu trúc cơ sở dữ liệu** (không có tệp mới trong `migrations/versions/`): chỉ cần đổi lại image.
 
 ```bash
 docker images huayu-coach            # chọn thẻ before-AAAAMMDD-HHMM của bản cần quay về
@@ -360,19 +417,21 @@ Ghi chú:
 
 Hiện chưa có cổng thanh toán: thanh toán là thủ công (sinh viên chuyển khoản, quản trị viên ghi nhận, hệ thống gia hạn quyền sử dụng).
 
-1. Giá: các gói mặc định (199 và 799 NT$) chỉ là **giá giữ chỗ** nằm trong `DEFAULT_PLANS` của `app/services/billing.py`. Đặt giá thật ở trang quản trị `/admin/billing` (nếu trang đó chưa cho sửa giá thì sửa trực tiếp bảng `billing_plans`).
-2. **Trước khi bật:** khi thu phí được bật, tài khoản nào chưa có gói hoặc đợt dùng thử còn hạn sẽ bị đưa sang trang Thanh toán và mất quyền học. Hãy tặng thêm ngày dùng cho các tài khoản đang học trong khu quản trị, và thử trước bằng một tài khoản thử.
+1. Giá: các gói mặc định (199 và 799 NT$) chỉ là **giá giữ chỗ** nằm trong `DEFAULT_PLANS` của `app/services/billing.py`. Đặt giá thật ở **Quản trị → Gói và thanh toán** (`/admin/billing`): sửa ô **Giá (NT$)** của từng gói rồi lưu.
+2. **Trước khi bật:** khi thu phí được bật, tài khoản nào chưa có gói hoặc đợt dùng thử còn hạn sẽ bị đưa sang trang **Gói của bạn** (`/billing`) và mất quyền học. Hãy tặng thêm ngày dùng cho các tài khoản đang học trong khu quản trị, và thử trước bằng một tài khoản thử.
 3. Sửa `.env` (chú thích ở dòng riêng; nháy kép cho giá trị có dấu cách và ngoặc, hoặc nháy đơn nếu có `$`):
 
    ```ini
    HUAYU_BILLING_ENABLED=true
    HUAYU_TRIAL_DAYS=14
-   HUAYU_PAYMENT_INSTRUCTIONS="Chuyển khoản tới ... (nội dung chuyển khoản: email đăng ký)"
+   HUAYU_PAYMENT_INSTRUCTIONS="Chuyển khoản tới ngân hàng ..., số tài khoản ..., chủ tài khoản ..."
    ```
+
+   Chỉ viết thông tin tài khoản nhận tiền. Trang Gói của bạn (`/billing`) tự thêm dòng dặn người học ghi **mã người học** của họ (dạng `L...`) vào nội dung chuyển khoản; khi nhận tiền, bạn tìm người đó theo mã trong Quản trị > Người học rồi bấm Kích hoạt gói. Nếu `HUAYU_PAYMENT_INSTRUCTIONS` để trống, người học chỉ thấy "Thông tin thanh toán chưa được cập nhật".
 
 4. `docker compose up -d` (tạo lại container với cấu hình mới; dữ liệu giữ nguyên).
 5. Kiểm tra trang `/pricing` và `/terms`: trang tự chuyển từ "miễn phí trong giai đoạn thử nghiệm" sang "dùng thử {số ngày} ngày".
-6. Phần "Hoàn tiền và rút lui" trong `/terms` còn là chỗ trống màu vàng: chủ sở hữu phải quy định chính sách và luật sư phải xem trước khi thu tiền thật. Việc đăng ký kinh doanh, hóa đơn và cổng thanh toán ở Đài Loan xem `README.md`.
+6. Phần "Hoàn tiền và rút lui" trong `/terms` còn là chỗ trống màu vàng: chủ sở hữu phải quy định chính sách (sửa khóa `legal.refund_placeholder` trong `app/locales/{vi,zh-TW,en}/marketing.json`, rồi `docker compose up -d --build`) và luật sư phải xem trước khi thu tiền thật. Việc đăng ký kinh doanh, hóa đơn và cổng thanh toán ở Đài Loan xem `README.md`.
 
 ## 14. Giám sát và cảnh báo **[CHƯA KIỂM THỬ]**
 
@@ -393,8 +452,8 @@ Bộ triển khai không tự báo cho bạn khi có sự cố; bạn cần ít 
 - [ ] **Thư đặt lại mật khẩu thật sự đến được hộp thư**: bấm "Quên mật khẩu" bằng email thật của bạn và chờ thư. Ứng dụng luôn báo "nếu email có tài khoản thì đã gửi liên kết" dù thư có đi hay không, nên chỉ thử bằng hộp thư thật mới biết. Không thấy thư: `docker compose logs --tail 100 app` tìm `smtp send failed` (kiểm tra cặp cổng/`HUAYU_SMTP_SECURITY`, mục 7).
 - [ ] Đã quyết định về câu hỏi: giáo viên đã duyệt, hoặc cố ý bật `HUAYU_ALLOW_UNREVIEWED_QUESTIONS=true`.
 - [ ] `HUAYU_SUPPORT_EMAIL` đã đặt (trang quyền riêng tư dẫn sinh viên liên hệ qua địa chỉ này; nếu để trống, dòng liên hệ bị ẩn).
-- [ ] `/privacy` và `/terms`: đã điền các ô vàng (tên đơn vị vận hành, địa chỉ, mã số thuế, chính sách hoàn tiền, tòa án) trong `app/locales/{vi,zh-TW,en}/marketing.json` (khóa `legal.*`) và **luật sư đã xem**. Sau khi luật sư duyệt, xóa dòng "Bản nháp" khỏi `app/templates/marketing/legal.html`.
-- [ ] Sao lưu chạy được, cron đã cài, `BACKUP_PING_URL` hoạt động (đã thử tắt cron một ngày xem có thư báo), đã thử `restore.sh`, đã chép bản sao lưu ra ngoài VPS **kèm vòng đời 14 ngày** (mục 10.4), đã cất `.env` ở nơi an toàn.
+- [ ] `/privacy` và `/terms`: đã điền các ô vàng. Tên đơn vị vận hành, địa chỉ và mã số thuế điền bằng `HUAYU_OPERATOR_NAME`, `HUAYU_OPERATOR_ADDRESS`, `HUAYU_OPERATOR_TAX_ID` trong `.env` (rồi `docker compose up -d`). Chính sách hoàn tiền và tòa án (chỉ có trên `/terms`) **chưa điền được bằng `.env`**: sửa các khóa `legal.refund_placeholder` và `legal.court_placeholder` trong `app/locales/{vi,zh-TW,en}/marketing.json` rồi `docker compose up -d --build`. Email liên hệ lấy từ `HUAYU_SUPPORT_EMAIL`. **Luật sư đã xem** cả hai trang. Sau khi luật sư duyệt, xóa dòng "Bản nháp" (dòng `<p class="notice" role="note">...</p>` ngay dưới thẻ `<article ...>`) khỏi `app/templates/marketing/legal.html`, rồi dựng lại ảnh.
+- [ ] Sao lưu chạy được, cron đã cài, `BACKUP_PING_URL` hoạt động (đã thử tắt cron một ngày xem có thư báo), đã thử khôi phục (`restore.sh` trên VPS thử hoặc trước khi có dữ liệu thật, hoặc ít nhất `restore_db.py` vào thư mục thử, mục 10.5; **không** thử `restore.sh` trên máy đang có sinh viên), đã chép bản sao lưu ra ngoài VPS **kèm vòng đời 14 ngày** (mục 10.4), đã cất `.env` ở nơi an toàn.
 - [ ] Đã đọc mục 10.6 ("Không bao giờ chạy").
 - [ ] SSH: đã tắt mật khẩu **sau khi** thử khóa (mục 2); ufw đã bật và SSH vẫn vào được.
 - [ ] Không có bản ghi DNS AAAA (mục 5).
@@ -444,6 +503,9 @@ sudo journalctl -u huayu-coach -f
 HUAYU_SECRET_KEY=dán-khóa-vừa-tạo-vào-đây
 HUAYU_BASE_URL=https://huayu.example.com
 HUAYU_SUPPORT_EMAIL=ban@example.com
+HUAYU_OPERATOR_NAME="Tên đơn vị vận hành"
+HUAYU_OPERATOR_ADDRESS="Địa chỉ đơn vị vận hành"
+HUAYU_OPERATOR_TAX_ID=ma-so-thue
 HUAYU_INVITE_CODE=mã-mời-bí-mật-cho-đợt-thử
 HUAYU_BILLING_ENABLED=false
 HUAYU_ALLOW_UNREVIEWED_QUESTIONS=true
@@ -453,7 +515,7 @@ HUAYU_SMTP_SECURITY=starttls
 HUAYU_SMTP_USER=ten-dang-nhap
 HUAYU_SMTP_PASSWORD='mat-khau-smtp'
 HUAYU_SMTP_FROM=ban@example.com
-HUAYU_PAYMENT_INSTRUCTIONS="Chuyển khoản tới ... (nội dung chuyển khoản: email đăng ký)"
+HUAYU_PAYMENT_INSTRUCTIONS="Chuyển khoản tới ngân hàng ..., số tài khoản ..., chủ tài khoản ..."
 ```
 
 Khác với `.env` của Docker:
@@ -473,6 +535,7 @@ sudo systemd-run --pty --wait --collect -p User=huayu -p WorkingDirectory=/opt/h
   /usr/bin/env HUAYU_ENV=prod HUAYU_DATA_DIR=/var/lib/huayu-coach HUAYU_TRUSTED_PROXY=true \
   /opt/huayu-coach/.venv/bin/python -m app.cli check
 # create-admin: thay "check" bằng "create-admin --email ban@example.com" (hỏi mật khẩu hai lần)
+# delete-user (xóa tài khoản theo yêu cầu): thay "check" bằng "delete-user --email EMAIL" (hỏi gõ DELETE để xác nhận)
 ```
 
 **Sao lưu** (cùng `backup.sh`, chế độ `host`; chạy bằng root để nó chuyển sang người dùng `huayu`, nhờ vậy không tạo tệp SQLite thuộc nhầm chủ; bản sao lưu nằm ở `/root/huayu-backups`, mặc định quyền chỉ root, giữ 14 tệp):
@@ -496,9 +559,9 @@ gunzip -c /root/huayu-backups/huayu-AAAAMMDD-HHMMSS.db.gz | sudo -u huayu env HU
 sudo systemctl start huayu-coach
 ```
 
-(Cũng như bản Docker, khôi phục làm sống lại tài khoản đã xóa sau thời điểm sao lưu; mục 10.5 áp dụng, chỉ đổi `/data` thành `/var/lib/huayu-coach`, chạy bằng `sudo -u huayu python3 -`.)
+(Cũng như bản Docker, khôi phục làm sống lại tài khoản đã xóa sau thời điểm sao lưu; mục 10.5 áp dụng, chỉ đổi `/data` thành `/var/lib/huayu-coach`, chạy bằng `sudo -u huayu python3 -`; để xóa lại các tài khoản đó dùng lệnh `delete-user` qua `systemd-run` như ở phần "Kiểm tra cấu hình và tạo quản trị viên" ngay trên. Thử khôi phục mà không đụng dữ liệu thật: `restore_db.py` với `HUAYU_DATA_DIR` trỏ vào thư mục thử, như mục 10.5.)
 
-**Cập nhật và quay lui** (không có "ảnh" để đổi thẻ, nên giữ nguyên một bản chép của thư mục mã, kèm môi trường ảo):
+**Cập nhật và quay lui** (không có "image" để đổi thẻ, nên giữ nguyên một bản chép của thư mục mã, kèm môi trường ảo):
 
 ```bash
 sudo BACKUP_MODE=host /opt/huayu-coach/deploy/backup.sh               # 1. sao lưu trước

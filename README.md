@@ -7,6 +7,8 @@
 
 ## Tiếng Việt
 
+**Hướng dẫn sử dụng từng bước cho người vận hành, học viên, giáo viên và quản trị viên: [docs/HUONG-DAN-SU-DUNG.md](docs/HUONG-DAN-SU-DUNG.md).**
+
 ### Đây là gì
 
 **Huayu Coach** (華語教練) là ứng dụng web dùng được trên điện thoại, giúp sinh viên quốc tế tại Đài Loan (ưu tiên người Việt) học tiếng Hoa ở mức A1–A2 mà không bị áp lực. Ý tưởng cốt lõi, lấy từ một dự án thi đấu đại học (đội 霸氣隊): **khi người học dừng lại, ứng dụng hỏi vì sao** (4 lý do: quá khó, không có thời gian, cần nghỉ, dễ bị phân tâm). Một bộ quy tắc đề xuất **tối đa ba điều chỉnh** kèm căn cứ, và **người học quyết định** (nhận một vài điều, nhận hết, hoặc không nhận). Không có gì thay đổi nếu họ chưa xác nhận.
@@ -29,7 +31,7 @@ Mật khẩu của các tài khoản mẫu là `demo-password-1` (chỉ dùng kh
 
 ```bash
 uv run python -m app.cli prepare                         # áp dụng migration + nạp dữ liệu tham chiếu (chạy lại an toàn)
-uv run python -m app.cli create-admin --email ban@example.com   # tạo hoặc nâng quyền quản trị viên (hỏi mật khẩu)
+uv run python -m app.cli create-admin --email ban@example.com   # tạo quản trị viên mới (hỏi mật khẩu hai lần); nếu email đã có tài khoản thì chỉ nâng quyền, giữ nguyên mật khẩu (thêm --reset-password để đặt mật khẩu mới)
 uv run python -m app.cli delete-user --email sv@example.com   # xóa tài khoản khi sinh viên yêu cầu qua email (cùng đường xử lý với nút xóa trong ứng dụng)
 uv run python -m app.cli demo                            # dữ liệu mẫu, chỉ dành cho phát triển
 uv run python -m app.cli check                           # in cấu hình đang dùng (ẩn bí mật) và kiểm tra cơ sở dữ liệu
@@ -62,7 +64,7 @@ Xem **[deploy/deploy.md](deploy/deploy.md)**: từng bước cho Ubuntu 24.04 v�
 
 ### Biến môi trường
 
-Cấu hình đọc từ biến môi trường hoặc tệp `.env` (mẫu: `.env.example`). Mọi biến đều có tiền tố `HUAYU_`. Bảng dưới đây khớp với `app/config.py`.
+Cấu hình đọc từ biến môi trường hoặc tệp `.env` (mẫu: `.env.example`). Mọi biến trong bảng dưới đây có tiền tố `HUAYU_` (bảng khớp với `app/config.py`); vài biến khác không có tiền tố (`DOMAIN`, `PORT`, `BACKUP_*`) được nêu ngay sau bảng.
 
 | Biến | Mặc định | Ý nghĩa |
 |---|---|---|
@@ -82,6 +84,9 @@ Cấu hình đọc từ biến môi trường hoặc tệp `.env` (mẫu: `.env.
 | `HUAYU_TRIAL_DAYS` | `14` | Số ngày dùng thử khi bật thu phí |
 | `HUAYU_PAYMENT_INSTRUCTIONS` | (trống) | Hướng dẫn thanh toán thủ công hiện cho người học |
 | `HUAYU_SUPPORT_EMAIL` | (trống) | Địa chỉ hỗ trợ; hiện ở chân trang và trang quyền riêng tư. Nếu trống, dòng liên hệ bị ẩn |
+| `HUAYU_OPERATOR_NAME` | (trống) | Tên đơn vị vận hành, hiện trên trang quyền riêng tư và điều khoản. Trống thì còn ô giữ chỗ màu vàng |
+| `HUAYU_OPERATOR_ADDRESS` | (trống) | Địa chỉ đơn vị vận hành (như trên) |
+| `HUAYU_OPERATOR_TAX_ID` | (trống) | Mã số thuế 統一編號 (như trên) |
 | `HUAYU_LLM_PROVIDER` | `none` | `none`, `openai` hoặc `anthropic`. AI chỉ viết lại lời giải thích |
 | `HUAYU_LLM_MODEL` | (trống) | Tên mô hình (bắt buộc khi bật AI) |
 | `HUAYU_LLM_API_KEY` | (trống) | Khóa API (bắt buộc khi bật AI) |
@@ -112,7 +117,7 @@ Không thêm `-q` (đã có sẵn trong cấu hình). Test của trang công kha
 - Tiêu đề bảo mật: CSP `script-src 'self'` (không có script nội dòng), chống nhúng khung, `nosniff`, Referrer-Policy, HSTS ở prod; trang chứa dữ liệu cá nhân gửi `Cache-Control: no-store`. Không có trang tài liệu API công khai.
 - Phân quyền theo vai trò (người học, giáo viên, quản trị); người học chỉ đọc được dòng dữ liệu của chính mình. Thao tác quản trị được ghi vào nhật ký kiểm tra.
 - Giới hạn tốc độ đăng nhập và các thao tác nhạy cảm, tính theo IP, lưu trong bộ nhớ **của từng tiến trình** (chạy 2 worker nghĩa là hạn mức tính riêng cho mỗi worker, và mất khi khởi động lại).
-- SQLite chế độ WAL, ghi bằng `BEGIN IMMEDIATE`; xóa tài khoản xóa theo dây chuyền mọi dữ liệu của người học (chỉ giữ một dòng nhật ký có mã ẩn danh và các bản ghi thanh toán đã tách khỏi tài khoản).
+- SQLite chế độ WAL, ghi bằng `BEGIN IMMEDIATE`; xóa tài khoản xóa theo dây chuyền mọi dữ liệu của người học (chỉ giữ các dòng nhật ký đã bị gỡ mã người học và ghi chú, kèm một dòng account_deleted, và các bản ghi thanh toán đã tách khỏi tài khoản).
 - AI (nếu bật): chỉ gửi mã lý do và các dữ kiện có cấu trúc, **không bao giờ** gửi tên, email hay ghi chú tự do; cần sự đồng ý riêng; câu trả lời chứa con số không có trong dữ liệu bị loại; mọi lỗi đều quay về văn bản mẫu.
 - Bản triển khai: container chạy bằng người dùng không có đặc quyền, cổng ứng dụng không công bố ra ngoài, chỉ Caddy nhận 80/443. Nhật ký truy cập của ứng dụng tắt (liên kết đặt lại mật khẩu chứa một mã dùng được trong đường dẫn), Caddy cắt yêu cầu treo (timeout đọc) và từ chối thân yêu cầu trên 3 MB, nhật ký Docker xoay vòng (tối đa 50 MB mỗi dịch vụ), có trần bộ nhớ cho container, volume dữ liệu được bảo vệ khỏi `docker compose down -v`.
 - Chưa có: xác thực hai lớp, đăng nhập bằng bên thứ ba, quét lỗ hổng phụ thuộc tự động, kiểm thử xâm nhập.
@@ -141,6 +146,8 @@ Phần mềm không giải quyết được các việc dưới đây; hãy hỏ
 
 ## English
 
+**Step-by-step user guide for the operator, learners, teachers and admins (written in Vietnamese): [docs/HUONG-DAN-SU-DUNG.md](docs/HUONG-DAN-SU-DUNG.md).**
+
 ### What it is
 
 **Huayu Coach** (華語教練) is a mobile-first web app that helps international students in Taiwan (Vietnamese first) learn Mandarin at A1–A2 without pressure. Its core idea comes from a university competition project (team 霸氣隊): **when a learner stops, the app asks why** (4 reasons: too hard, no time, need rest, distracted). A rule engine proposes **at most three plan adjustments** with evidence, and **the learner decides** (accept some, all or none). Nothing changes until they confirm.
@@ -163,7 +170,7 @@ The sample accounts use the password `demo-password-1` (development only; `demo`
 
 ```bash
 uv run python -m app.cli prepare                         # apply migrations + load reference data (safe to repeat)
-uv run python -m app.cli create-admin --email you@example.com   # create or promote an admin (asks for a password)
+uv run python -m app.cli create-admin --email you@example.com   # create an admin (asks for a password twice); an existing account is only promoted and keeps its password (add --reset-password to set a new one)
 uv run python -m app.cli delete-user --email student@example.com   # erase an account on request (same code path as the in-app delete button)
 uv run python -m app.cli demo                            # sample data, development only
 uv run python -m app.cli check                           # print the effective configuration (secrets hidden), check the database
@@ -196,7 +203,7 @@ See **[deploy/deploy.md](deploy/deploy.md)** (written in Vietnamese): step by st
 
 ### Environment variables
 
-Settings come from environment variables or a `.env` file (template: `.env.example`). All variables are prefixed `HUAYU_`. The table matches `app/config.py`.
+Settings come from environment variables or a `.env` file (template: `.env.example`). Every variable in this table is prefixed `HUAYU_` (the table matches `app/config.py`); the few that are not (`DOMAIN`, `PORT`, `BACKUP_*`) are listed right after it.
 
 | Variable | Default | Meaning |
 |---|---|---|
@@ -216,6 +223,9 @@ Settings come from environment variables or a `.env` file (template: `.env.examp
 | `HUAYU_TRIAL_DAYS` | `14` | Free trial length when billing is on |
 | `HUAYU_PAYMENT_INSTRUCTIONS` | (empty) | Manual payment instructions shown to learners |
 | `HUAYU_SUPPORT_EMAIL` | (empty) | Support address shown in the footer and on the privacy page. Hidden when empty |
+| `HUAYU_OPERATOR_NAME` | (empty) | Operator name shown on the privacy and terms pages. Empty keeps the visible yellow placeholder |
+| `HUAYU_OPERATOR_ADDRESS` | (empty) | Operator address (same) |
+| `HUAYU_OPERATOR_TAX_ID` | (empty) | Tax ID 統一編號 (same) |
 | `HUAYU_LLM_PROVIDER` | `none` | `none`, `openai` or `anthropic`. The AI only re-words explanations |
 | `HUAYU_LLM_MODEL` | (empty) | Model name (required when the AI is on) |
 | `HUAYU_LLM_API_KEY` | (empty) | API key (required when the AI is on) |
@@ -246,7 +256,7 @@ Do not add `-q` (it is already configured). The public-site tests also check tha
 - Headers: CSP `script-src 'self'` (no inline scripts), no framing, `nosniff`, Referrer-Policy, HSTS in prod; pages with personal data are sent `Cache-Control: no-store`. No public API docs.
 - Role-based access (learner, teacher, admin); a learner can only read their own rows. Admin actions are written to an audit log.
 - Rate limits on login and sensitive actions, per IP, kept in memory **per process** (with 2 workers each worker has its own budget, and it resets on restart).
-- SQLite in WAL mode with `BEGIN IMMEDIATE` for writes; deleting an account cascades through everything the learner produced (only an audit line with the anonymous code and payment records detached from the account remain).
+- SQLite in WAL mode with `BEGIN IMMEDIATE` for writes; deleting an account cascades through everything the learner produced (only anonymised audit lines (the learner code and staff notes are removed, plus one account_deleted line) and payment records detached from the account remain).
 - AI (if on): only the reason code and structured facts are sent, **never** name, e-mail or the free-text note; it needs separate consent; a reply with a number that is not in the data is rejected; every failure falls back to template text.
 - Deployment: the container runs as an unprivileged user, the app port is not published, and only Caddy receives 80/443. The app's access log is off (the password-reset link carries a live token in its path), Caddy cuts stalled requests (read timeouts) and refuses request bodies over 3 MB, Docker logs rotate (at most 50 MB per service), containers have a memory ceiling, and the data volume is protected from `docker compose down -v`.
 - Not there: two-factor login, third-party sign-in, automated dependency scanning, a penetration test.

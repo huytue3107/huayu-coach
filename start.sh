@@ -10,5 +10,6 @@ uv sync --quiet
 uv run python -m app.cli prepare
 if [ "${1:-}" = "demo" ]; then uv run python -m app.cli demo; fi
 PORT="${PORT:-8000}"
+export HUAYU_BASE_URL="${HUAYU_BASE_URL:-http://localhost:${PORT}}"   # password-reset links must use the port you chose
 echo "→ http://localhost:${PORT}   (Ctrl+C to stop)"
 exec uv run uvicorn app.main:app --host 127.0.0.1 --port "$PORT" --reload
