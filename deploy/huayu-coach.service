@@ -1,0 +1,64 @@
+# systemd unit for a NO-Docker install (alternative to compose.yml). NOT TESTED: see deploy/deploy.md, section "Without Docker".
+#
+#   sudo cp deploy/huayu-coach.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now huayu-coach
+#
+# Assumes: code in /opt/huayu-coach with its virtualenv in .venv (uv sync --frozen --no-dev), a system user `huayu`,
+# secrets in /etc/huayu-coach.env (chmod 600, owner root: systemd reads it as root), data in /var/lib/huayu-coach,
+# Caddy on the same host (deploy/Caddyfile.systemd). Keep the code outside /home: ProtectHome=true hides home directories.
+[Unit]
+Description=Huayu Coach (FastAPI + SQLite)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=huayu
+Group=huayu
+WorkingDirectory=/opt/huayu-coach
+
+# /etc/huayu-coach.env uses SYSTEMD syntax, which is NOT the same as the Docker `.env`: one NAME=value per line, no `export`,
+# and a comment only on a line of its own (a `# ...` after a value becomes PART of the value). Use "double quotes" around a
+# value with spaces or brackets. deploy/deploy.md section 16 has a ready-made example.
+# systemd lets this file OVERRIDE Environment=, so the values that must never change are set on the command lines below
+# (through `env`), where the file cannot override them. Do not rely on Environment= for them.
+EnvironmentFile=/etc/huayu-coach.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+# Creates /var/lib/huayu-coach owned by User=huayu. systemd.exec(5): StateDirectory= is excluded from ProtectSystem=, so the
+# database (and its -wal and -shm files, which SQLite WAL needs next to it) stays writable without ReadWritePaths=.
+# If you move HUAYU_DATA_DIR elsewhere you DO need ReadWritePaths=<that directory>.
+StateDirectory=huayu-coach
+# Backstop against one runaway process taking the whole server (cgroup v2, Ubuntu 24.04). See "VPS size" in deploy/deploy.md.
+MemoryMax=768M
+# Migrations + reference data (safe to repeat); the service does not start if this fails.
+ExecStartPre=/usr/bin/env HUAYU_ENV=prod HUAYU_DATA_DIR=/var/lib/huayu-coach HUAYU_TRUSTED_PROXY=true /opt/huayu-coach/.venv/bin/python -m app.cli prepare
+# --no-access-log: the password-reset link /reset/<token> carries a live credential in its URL path, so requests are not logged.
+ExecStart=/usr/bin/env HUAYU_ENV=prod HUAYU_DATA_DIR=/var/lib/huayu-coach HUAYU_TRUSTED_PROXY=true /opt/huayu-coach/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2 --proxy-headers --no-access-log
+Restart=always
+RestartSec=3
+
+# Hardening: the service only needs to write to its own data directory. Each flag below was reviewed against what SQLite WAL
+# needs (a read-write data directory for huayu.db, -wal and -shm; temporary files in a /tmp it may write) and none takes
+# that away. This is a review of the systemd documentation, NOT a run: there is no systemd on the development Mac.
+NoNewPrivileges=true
+# PrivateTmp: SQLite's temporary files go to a private /tmp that is removed when the service stops. WAL itself does not use /tmp.
+PrivateTmp=true
+# PrivateDevices keeps /dev/null and /dev/urandom, which Python and argon2 use.
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=true
+SystemCallArchitectures=native
+# Files the service creates (the database, outbox) are readable by the service user only.
+UMask=0077
+# Deliberately NOT set, because they were not tested here and can break Python extension modules: MemoryDenyWriteExecute,
+# SystemCallFilter.
+
+[Install]
+WantedBy=multi-user.target

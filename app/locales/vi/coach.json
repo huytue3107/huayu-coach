@@ -1,0 +1,259 @@
+{
+  "reason": {
+    "too_hard": {
+      "title": "Mình thấy quá khó",
+      "desc": "Bài học hoặc bài tập đang vượt quá sức của mình lúc này."
+    },
+    "no_time": {
+      "title": "Mình không có thời gian",
+      "desc": "Dạo này mình bận, không dành được thời gian học như thường lệ."
+    },
+    "need_rest": {
+      "title": "Mình cần nghỉ ngơi",
+      "desc": "Mình mệt hoặc quá tải và muốn nghỉ một chút."
+    },
+    "distracted": {
+      "title": "Mình hay bị xao nhãng",
+      "desc": "Mình bắt đầu học được, nhưng khó giữ được sự tập trung."
+    }
+  },
+  "stuck": {
+    "title": "Điều gì đang làm bạn khó học?",
+    "lead": "Tạm dừng là chuyện bình thường, ai học cũng có lúc như vậy. Chúng mình chỉ muốn hiểu bạn, không hề thúc ép.",
+    "promise": "Kế hoạch của bạn sẽ không thay đổi nếu bạn chưa đồng ý.",
+    "legend": "Lý do chính là gì?",
+    "minutes_label": "Hôm nay bạn có khoảng bao nhiêu phút? (không bắt buộc)",
+    "minutes_hint": "Từ 5 đến 240 phút. Chúng mình dùng con số này để gợi ý thời gian học mỗi ngày cho vừa sức.",
+    "note_label": "Bạn muốn nói thêm điều gì không? (không bắt buộc)",
+    "note_hint": "Ghi chú riêng, tối đa 500 ký tự. Ghi chú này không được dùng để tính gợi ý và không bao giờ được gửi đến dịch vụ AI.",
+    "submit": "Xem các lựa chọn của mình",
+    "open_proposal": "Bạn đang có một gợi ý chưa quyết định.",
+    "open_proposal_link": "Xem gợi ý",
+    "rest_link": "Chỉ muốn nghỉ thôi? Nghỉ ngay bây giờ"
+  },
+  "summary": {
+    "too_hard": "Bạn nói rằng hiện tại mọi thứ đang quá khó. Điều đó rất bình thường khi học tiếng Hoa và không có nghĩa là bạn kém. Dưới đây là vài cách nhẹ nhàng để giảm bớt khối lượng, dựa trên kế hoạch và các câu trả lời gần đây của bạn. Cái nào có ích thì chọn, cái nào không thì bỏ qua.",
+    "no_time": "Bạn nói rằng hiện tại bạn không có đủ thời gian. Điều đó hoàn toàn hợp lý: kế hoạch chỉ hữu ích khi vừa với cuộc sống của bạn. Dưới đây là vài cách làm cho kế hoạch nhỏ lại. Cái nào có ích thì chọn, cái nào không thì bỏ qua.",
+    "need_rest": "Bạn nói rằng bạn cần nghỉ ngơi. Đó là một lý do chính đáng để dừng lại, bạn không cần giải thích thêm. Dưới đây là một quãng nghỉ ngắn để bạn chọn, hoặc bạn có thể giữ nguyên kế hoạch.",
+    "distracted": "Bạn nói rằng khó giữ tập trung. Ai cũng có lúc như vậy. Dưới đây là vài thay đổi nhỏ giúp mỗi buổi học dễ hoàn thành hơn. Cái nào có ích thì chọn, cái nào không thì bỏ qua.",
+    "default": "Dưới đây là vài gợi ý nhẹ nhàng dựa trên kế hoạch của bạn. Cái nào có ích thì chọn, cái nào không thì bỏ qua."
+  },
+  "item_title": {
+    "reduce_new_grammar": "Bớt điểm ngữ pháp mới",
+    "change_exercise_count": "Bớt số bài tập",
+    "change_daily_minutes": "Rút ngắn thời gian học mỗi ngày",
+    "split_session": "Chia nhỏ buổi học",
+    "pomodoro": "Học theo từng đợt ngắn",
+    "take_rest": "Nghỉ ngơi một chút",
+    "review_topic": "Ôn lại một chủ đề còn khó",
+    "unknown": "Một gợi ý"
+  },
+  "item": {
+    "reduce_new_grammar": "Điểm ngữ pháp mới mỗi ngày: {old} → {new}.",
+    "reduce_new_grammar_plain": "Điểm ngữ pháp mới mỗi ngày: {new}.",
+    "change_exercise_count": "Số bài tập mỗi ngày: {old} → {new}.",
+    "change_exercise_count_plain": "Số bài tập mỗi ngày: {new}.",
+    "change_daily_minutes": "Thời gian học mỗi ngày: {old} → {new} phút.",
+    "change_daily_minutes_plain": "Thời gian học mỗi ngày: {new} phút.",
+    "split_session": "Chia việc học mỗi ngày thành {sessions} buổi ngắn (hiện tại: {old}).",
+    "split_session_plain": "Chia việc học mỗi ngày thành {sessions} buổi ngắn.",
+    "pomodoro": "Học theo từng đợt tập trung {minutes} phút, nghỉ ngắn giữa các đợt.",
+    "take_rest": "Nghỉ {days} ngày. Bạn không cần học gì cả, và có thể quay lại sớm hơn bất cứ lúc nào.",
+    "take_rest_one": "Nghỉ 1 ngày. Bạn không cần học gì cả, và có thể quay lại sớm hơn bất cứ lúc nào.",
+    "review_topic": "Luyện thêm một chút về “{topic}” trong tuần tới.",
+    "unknown": "Một gợi ý mà phiên bản ứng dụng này chưa mô tả được."
+  },
+  "evidence": {
+    "self_report": "Bạn đã cho chúng mình biết: “{reason}”.",
+    "plan_value": "Kế hoạch hiện tại của bạn, {field}: {value}.",
+    "accuracy": "Trong {days} ngày qua, bạn trả lời đúng {correct} trên {total} câu {skill}.",
+    "few_data_zero": "Chúng mình chưa có câu trả lời {skill} nào của bạn, nên chưa thể nói bạn đang học thế nào và sẽ không đoán bừa.",
+    "few_data_one": "Cho đến giờ chúng mình chỉ có 1 câu trả lời {skill} của bạn. Như vậy là quá ít để nhận xét, nên chúng mình không hiển thị tỉ lệ phần trăm.",
+    "few_data": "Cho đến giờ chúng mình chỉ có {total} câu trả lời {skill} của bạn. Như vậy là quá ít để nhận xét, nên chúng mình không hiển thị tỉ lệ phần trăm.",
+    "weak_topic": "Trong {days} ngày qua, bạn làm sai {wrong} câu về “{topic}”.",
+    "completion": "Trong {days} ngày qua, bạn đã hoàn thành {done} trên {scheduled} nhiệm vụ hằng ngày.",
+    "available_minutes": "Bạn cho biết hôm nay bạn có khoảng {value} phút.",
+    "plan_at_minimum": "Kế hoạch của bạn đã ở mức nhẹ nhất, nên nghỉ ngơi là lựa chọn nhẹ nhàng duy nhất còn lại."
+  },
+  "skill": {
+    "grammar": "ngữ pháp",
+    "vocab": "từ vựng",
+    "reading": "đọc hiểu"
+  },
+  "label": {
+    "daily_minutes": "thời gian học mỗi ngày (phút)",
+    "new_grammar": "điểm ngữ pháp mới mỗi ngày",
+    "exercise_count": "số bài tập mỗi ngày",
+    "sessions_per_day": "số buổi học mỗi ngày",
+    "focus_minutes": "đợt tập trung (phút)"
+  },
+  "field": {
+    "daily_minutes": "Thời gian học mỗi ngày: {old} → {new} phút",
+    "new_grammar": "Điểm ngữ pháp mới mỗi ngày: {old} → {new}",
+    "exercise_count": "Số bài tập mỗi ngày: {old} → {new}",
+    "sessions_per_day": "Số buổi học mỗi ngày: {old} → {new}",
+    "focus_minutes": "Độ dài đợt tập trung: {old} → {new} phút",
+    "review_topics": "Chủ đề ôn lại: {old} → {new}",
+    "rest_until": "Nghỉ ngơi: ngày học tiếp theo của bạn là {new}",
+    "unknown": "Có một thay đổi trong kế hoạch: {old} → {new}"
+  },
+  "value": {
+    "none": "chưa đặt",
+    "sep": ", "
+  },
+  "date": {
+    "fmt": "{d}/{m}/{y}"
+  },
+  "proposal": {
+    "title": "Đây là những gì chúng mình thấy",
+    "notice": "Chưa có gì thay đổi cả. Kế hoạch của bạn chỉ thay đổi khi bạn xác nhận.",
+    "you_said": "Bạn đã cho biết:",
+    "ai_label": "Lời giải thích do AI viết",
+    "ai_note": "Do một AI mà đơn vị vận hành chọn viết. Các gợi ý bên dưới và mọi con số đều do bộ quy tắc cố định quyết định, và chỉ những gợi ý bạn đánh dấu mới được áp dụng. Nếu lời văn này và danh sách bên dưới khác nhau, hãy lấy danh sách làm chuẩn.",
+    "glance": "Tóm lại: {titles}.",
+    "items_title": "Các gợi ý",
+    "items_hint": "Hãy đánh dấu những gợi ý bạn muốn. Chúng mình không đánh dấu sẵn giúp bạn.",
+    "evidence_title": "Vì sao chúng mình gợi ý điều này",
+    "btn_selected": "Chấp nhận những mục đã chọn",
+    "btn_all": "Chấp nhận tất cả",
+    "btn_reject": "Giữ nguyên kế hoạch hiện tại",
+    "manual": "Muốn tự đặt các con số? Chỉnh kế hoạch của bạn",
+    "outcome_accepted": "Bạn đã chấp nhận toàn bộ gợi ý này.",
+    "outcome_partial": "Bạn đã chấp nhận một phần của gợi ý này.",
+    "outcome_rejected": "Bạn đã chọn giữ nguyên kế hoạch như cũ.",
+    "outcome_superseded": "Một gợi ý mới hơn, hoặc một thay đổi bạn tự làm trong kế hoạch, đã thay thế gợi ý này.",
+    "see_result": "Xem điều đã xảy ra",
+    "ask_again": "Cho chúng mình biết bạn đang thế nào",
+    "stale_title": "Kế hoạch của bạn đã thay đổi kể từ khi có gợi ý này",
+    "stale_body": "Các con số ở đây được tính từ một phiên bản kế hoạch cũ hơn, nên chúng mình không thể áp dụng. Không có gì bị thay đổi. Nhận một gợi ý mới chỉ mất vài giây.",
+    "open_other": "Bạn có một gợi ý mới hơn đang chờ.",
+    "open_other_link": "Xem gợi ý",
+    "status_none": "Gợi ý này không có mục nào."
+  },
+  "done": {
+    "title_changed": "Kế hoạch của bạn đã được cập nhật",
+    "title_rest": "Nghỉ ngơi thật thoải mái nhé",
+    "title_rejected": "Kế hoạch của bạn vẫn như cũ",
+    "title_nochange": "Kế hoạch của bạn không có gì thay đổi",
+    "title_superseded": "Gợi ý này đã được thay thế",
+    "changes_title": "Điều đã thay đổi",
+    "version": "Đã lưu thành kế hoạch phiên bản {version}.",
+    "rest_chosen": "Bạn đã chọn nghỉ ngơi. Ngày học tiếp theo của bạn là {date}.",
+    "rest_link": "Đổi hoặc kết thúc quãng nghỉ",
+    "rejected": "Bạn đã quyết định giữ nguyên kế hoạch hiện tại. Không có gì bị thay đổi, và như vậy hoàn toàn ổn.",
+    "partial_note": "Bạn đã chọn một vài gợi ý. Những gợi ý còn lại được bỏ qua.",
+    "left_out_title": "Đã bỏ qua, không áp dụng",
+    "superseded": "Gợi ý này đã bị thay thế trước khi bạn quyết định, nên không có gì được áp dụng.",
+    "again": "Cho chúng mình biết bạn đang thế nào",
+    "plan_link": "Xem kế hoạch của mình",
+    "back": "Về trang hôm nay"
+  },
+  "feedback": {
+    "title": "Bạn thấy thế nào? (không bắt buộc)",
+    "lead": "Câu hỏi này nói về gợi ý của chúng mình, không phải về bạn. Câu trả lời của bạn giúp chúng mình giữ mọi thứ nhẹ nhàng.",
+    "q": {
+      "clarity": {
+        "label": "Gợi ý có rõ ràng không?",
+        "low": "Không rõ",
+        "high": "Rất rõ"
+      },
+      "helpfulness": {
+        "label": "Gợi ý có hữu ích không?",
+        "low": "Không hữu ích",
+        "high": "Rất hữu ích"
+      },
+      "pressure": {
+        "label": "Bạn có thấy áp lực không?",
+        "low": "Hoàn toàn không",
+        "high": "Rất nhiều"
+      }
+    },
+    "comment_label": "Bạn còn muốn nói gì thêm không? (không bắt buộc)",
+    "comment_hint": "Tối đa 500 ký tự.",
+    "submit": "Gửi phản hồi",
+    "thanks": "Cảm ơn bạn. Phản hồi của bạn đã được lưu."
+  },
+  "rest": {
+    "title": "Nghỉ ngơi một chút",
+    "lead": "Nghỉ ngơi cũng là một phần của việc học. Hãy chọn khoảng thời gian bạn cần. Bạn không phải giải thích gì, và có thể quay lại bất cứ lúc nào.",
+    "status_days": "Bạn đang nghỉ ngơi. Ngày học tiếp theo của bạn là {date}.",
+    "status_open": "Bạn đang nghỉ cho đến khi bạn quay lại.",
+    "resume_btn": "Mình quay lại rồi: học tiếp ngay",
+    "resume_hint": "Kế hoạch của bạn vẫn y như lúc bạn rời đi.",
+    "legend": "Bạn muốn nghỉ trong bao lâu?",
+    "one_day": "1 ngày",
+    "three_days": "3 ngày",
+    "seven_days": "7 ngày",
+    "until_back": "Cho đến khi mình quay lại",
+    "until_back_desc": "Không có ngày kết thúc. Bấm “Mình quay lại rồi” khi bạn sẵn sàng.",
+    "submit": "Bắt đầu nghỉ",
+    "submit_change": "Đổi thời gian nghỉ",
+    "note": "Nghỉ ngơi không làm thay đổi kế hoạch của bạn."
+  },
+  "plan": {
+    "title": "Kế hoạch học của bạn",
+    "own": "Đây là kế hoạch của bạn. Bạn có thể tăng hoặc giảm bất kỳ con số nào khi bạn muốn. Các gợi ý của chúng mình luôn chỉ là tùy chọn.",
+    "current_title": "Hiện tại",
+    "version": "Phiên bản {version}",
+    "minutes": "{value} phút",
+    "review_title": "Các chủ đề bạn đang ôn lại",
+    "review_until": "đến {date}",
+    "review_none": "Hiện chưa có chủ đề nào.",
+    "pending": "Bạn có một gợi ý đang chờ bạn quyết định.",
+    "pending_link": "Xem gợi ý",
+    "edit_title": "Chỉnh kế hoạch của mình",
+    "daily_minutes": "Thời gian học mỗi ngày (phút)",
+    "daily_minutes_hint": "Từ 10 đến 90",
+    "new_grammar": "Điểm ngữ pháp mới mỗi ngày",
+    "new_grammar_hint": "Từ 1 đến 10",
+    "exercise_count": "Số bài tập mỗi ngày",
+    "exercise_count_hint": "Từ 3 đến 20",
+    "save": "Lưu kế hoạch của mình",
+    "save_hint": "Khi lưu, mọi gợi ý đang mở sẽ được đóng lại vì các con số của nó không còn khớp nữa.",
+    "history_title": "Điều gì đã thay đổi, và vì sao",
+    "history_empty": "Chưa có thay đổi nào."
+  },
+  "history": {
+    "who_learner": "Bạn tự thay đổi",
+    "who_proposal": "Một gợi ý bạn đã chấp nhận",
+    "who_partial": "Một gợi ý bạn đã chấp nhận một phần",
+    "who_default": "Kế hoạch ban đầu của bạn",
+    "who_reject": "Bạn giữ nguyên kế hoạch như cũ",
+    "default_text": "Kế hoạch ban đầu: {minutes} phút mỗi ngày, {grammar} điểm ngữ pháp mới, {exercises} bài tập.",
+    "details": "Chi tiết",
+    "nothing": "Không có gì bị thay đổi."
+  },
+  "err": {
+    "generic": "Chưa được rồi. Bạn thử lại nhé.",
+    "invalid_form": "Bạn hãy điền đủ các con số nhé.",
+    "invalid_reason": "Bạn hãy chọn một trong bốn lý do.",
+    "invalid_available_minutes": "Số phút phải là một số nguyên từ 5 đến 240.",
+    "note_too_long": "Ghi chú của bạn quá dài. Giới hạn là 500 ký tự.",
+    "too_many_reports": "Hôm nay bạn đã gửi khá nhiều yêu cầu. Mình dừng ở đây nhé. Bạn thử lại vào ngày mai, hoặc tự chỉnh kế hoạch.",
+    "no_plan": "Chúng mình không tìm thấy kế hoạch học của bạn. Bạn hãy hoàn tất phần thiết lập trước nhé.",
+    "recommendation_not_found": "Chúng mình không tìm thấy gợi ý đó.",
+    "already_processed": "Gợi ý này đã được xử lý rồi.",
+    "invalid_decision": "Lựa chọn đó không hợp lệ. Bạn hãy dùng các nút trên trang nhé.",
+    "choose_items": "Hãy đánh dấu ít nhất một gợi ý trước, hoặc chọn “Giữ nguyên kế hoạch hiện tại”.",
+    "duplicate_item": "Có điều gì đó trong lựa chọn của bạn chưa đúng. Bạn hãy đánh dấu lại nhé.",
+    "item_not_in_recommendation": "Có điều gì đó trong lựa chọn của bạn chưa đúng. Bạn hãy đánh dấu lại nhé.",
+    "invalid_item": "Gợi ý này không còn áp dụng an toàn được nữa, nên không có gì bị thay đổi. Bạn hãy nhận một gợi ý mới.",
+    "stale_plan": "Kế hoạch của bạn đã thay đổi sau khi có gợi ý này, nên không có gì được áp dụng. Bạn hãy tải lại trang và nhận một gợi ý mới nếu cần.",
+    "decide_first": "Bạn hãy quyết định về gợi ý trước nhé.",
+    "invalid_rating": "Bạn hãy chọn điểm từ 1 đến 5 cho mỗi câu hỏi.",
+    "comment_too_long": "Nhận xét của bạn quá dài. Giới hạn là 500 ký tự.",
+    "already_rated": "Bạn đã gửi phản hồi cho gợi ý này rồi. Cảm ơn bạn!",
+    "invalid_rest_days": "Bạn hãy chọn thời gian muốn nghỉ.",
+    "no_change": "Các con số này giống kế hoạch hiện tại của bạn, nên không có gì được lưu.",
+    "invalid_daily_minutes": "Thời gian học mỗi ngày phải từ 10 đến 90 phút.",
+    "invalid_new_grammar": "Số điểm ngữ pháp mới mỗi ngày không thể nhiều hơn số bài tập mỗi ngày.",
+    "invalid_exercise_count": "Số bài tập phải từ 3 đến 20."
+  },
+  "flash": {
+    "rest_started": "Đã bắt đầu nghỉ. Ngày học tiếp theo của bạn là {date}. Bạn nhớ giữ gìn sức khỏe nhé.",
+    "rest_started_open": "Đã bắt đầu nghỉ. Hãy quay lại khi bạn sẵn sàng.",
+    "welcome_back": "Chào mừng bạn quay lại! Kế hoạch của bạn vẫn y như lúc bạn rời đi.",
+    "thanks": "Cảm ơn phản hồi của bạn.",
+    "plan_saved": "Đã lưu kế hoạch của bạn (phiên bản {version})."
+  }
+}

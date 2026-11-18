@@ -1,0 +1,60 @@
+{% extends "marketing/legal.html" %}
+{% set legal_title_key = 'marketing.terms.title' %}
+{% block legal_intro %}{{ t('marketing.terms.intro') }}{% endblock %}
+{% block legal_body %}
+  <section class="card stack" id="service" aria-labelledby="service-title">
+    <h2 id="service-title">{{ t('marketing.terms.s1_title') }}</h2>
+    <p>{{ t('marketing.terms.s1_p1') }}</p>
+    {{ items('marketing.terms.s1_i', 3) }}
+  </section>
+
+  <section class="card stack" id="account" aria-labelledby="account-title">
+    <h2 id="account-title">{{ t('marketing.terms.s2_title') }}</h2>
+    {{ items('marketing.terms.s2_i', 3) }}
+  </section>
+
+  <section class="card stack" id="decide" aria-labelledby="decide-title">
+    <h2 id="decide-title">{{ t('marketing.terms.s3_title') }}</h2>
+    <p>{{ t('marketing.terms.s3_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="payment" aria-labelledby="payment-title">
+    <h2 id="payment-title">{{ t('marketing.terms.s4_title') }}</h2>
+    <p>{% if billing_enabled %}{{ t('marketing.terms.s4_billing', days=trial_days) }}{% else %}{{ t('marketing.terms.s4_pilot') }}{% endif %}</p>
+    <ul class="bullets">
+      <li>{{ t('marketing.terms.s4_i1') }}</li>
+      <li>{{ t('marketing.terms.s4_i2') }}</li>
+      <li>{{ t('marketing.terms.s4_i3') }} <span class="placeholder">{{ t('marketing.legal.refund_placeholder') }}</span></li>
+    </ul>
+  </section>
+
+  <section class="card stack" id="fair-use" aria-labelledby="fair-use-title">
+    <h2 id="fair-use-title">{{ t('marketing.terms.s5_title') }}</h2>
+    {{ items('marketing.terms.s5_i', 3) }}
+  </section>
+
+  <section class="card stack" id="content" aria-labelledby="content-title">
+    <h2 id="content-title">{{ t('marketing.terms.s6_title') }}</h2>
+    <p>{{ t('marketing.terms.s6_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="availability" aria-labelledby="availability-title">
+    <h2 id="availability-title">{{ t('marketing.terms.s7_title') }}</h2>
+    <p>{{ t('marketing.terms.s7_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="liability" aria-labelledby="liability-title">
+    <h2 id="liability-title">{{ t('marketing.terms.s8_title') }}</h2>
+    <p>{{ t('marketing.terms.s8_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="changes" aria-labelledby="changes-title">
+    <h2 id="changes-title">{{ t('marketing.terms.s9_title') }}</h2>
+    <p>{{ t('marketing.terms.s9_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="law" aria-labelledby="law-title">
+    <h2 id="law-title">{{ t('marketing.terms.s10_title') }}</h2>
+    <p>{{ t('marketing.terms.s10_p1') }} <span class="placeholder">{{ t('marketing.legal.court_placeholder') }}</span></p>
+  </section>
+{% endblock %}

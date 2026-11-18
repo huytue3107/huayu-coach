@@ -1,0 +1,9 @@
+<nav class="admin-nav" aria-label="{{ t('admin.nav.label') }}">
+  <a href="/admin"{% if path == '/admin' %} aria-current="page"{% endif %}>{{ t('admin.nav.dashboard') }}</a>
+  <a href="/admin/questions"{% if path.startswith('/admin/questions') %} aria-current="page"{% endif %}>{{ t('admin.nav.questions') }}</a>
+  {% if user.role == 'admin' %}
+  <a href="/admin/users"{% if path.startswith('/admin/users') %} aria-current="page"{% endif %}>{{ t('admin.nav.users') }}</a>
+  <a href="/admin/billing"{% if path.startswith('/admin/billing') %} aria-current="page"{% endif %}>{{ t('admin.nav.billing') }}</a>
+  <a href="/admin/audit"{% if path.startswith('/admin/audit') %} aria-current="page"{% endif %}>{{ t('admin.nav.audit') }}</a>
+  {% endif %}
+</nav>

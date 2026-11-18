@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t('common.errors.' ~ code ~ '.title') }} · {{ app.name }}{% endblock %}
+{% block content %}
+<section class="card center stack">
+  <p class="big-code">{{ code }}</p>
+  <h1>{{ t('common.errors.' ~ code ~ '.title') }}</h1>
+  <p class="muted">{% if csrf_failed %}{{ t('common.errors.csrf') }}{% else %}{{ t('common.errors.' ~ code ~ '.body') }}{% endif %}</p>
+  <p><a class="btn btn-primary" href="{{ '/today' if user else '/' }}">{{ t('common.btn.home') }}</a></p>
+</section>
+{% endblock %}

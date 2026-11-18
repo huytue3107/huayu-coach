@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ t('billing.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>{{ t('billing.title') }}</h1>
+
+  <section class="card {{ 'soft' if access.state in ('free', 'active', 'staff') else ('warn' if access.state == 'trialing' else 'accent-orange') }} stack" aria-labelledby="state-h">
+    <h2 id="state-h">{{ t('billing.state.' ~ access.state ~ '.title') }}</h2>
+    <p>{% if access.state in ('trialing', 'active') %}{{ t('billing.state.' ~ access.state ~ '.body', date=until) }}
+       {% elif access.state == 'expired' and until %}{{ t('billing.state.expired.body_dated', date=until) }}
+       {% else %}{{ t('billing.state.' ~ access.state ~ '.body') }}{% endif %}</p>
+    {% if access.state == 'expired' %}<p class="muted">{{ t('billing.expired_data_note') }}</p>{% endif %}
+    {% if access.allowed and user.role == 'learner' %}<p><a class="btn btn-primary" href="/today">{{ t('billing.back_to_learning') }}</a></p>{% endif %}
+  </section>
+
+  {% if billing_enabled and user.role == 'learner' %}
+  <section class="stack" aria-labelledby="plans-h">
+    <h2 id="plans-h">{{ t('billing.plans.title') }}</h2>
+    {% if plans %}
+    <div class="grid two">
+      {% for p in plans %}
+      <div class="card stack">
+        <h3>{{ p.name.get(locale) or p.name.get('en') or p.code }}</h3>
+        <p class="big-value">{{ fmt_money(p.price_twd) }}</p>
+        <p class="muted">{{ t('billing.plans.days', days=p.period_days) }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}<p class="card muted">{{ t('billing.plans.none') }}</p>{% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="pay-h">
+    <h2 id="pay-h">{{ t('billing.pay.title') }}</h2>
+    {% if instructions %}<div class="pre-line">{{ instructions }}</div>
+    {% else %}<p class="muted">{{ t('billing.pay.no_instructions') }}</p>{% endif %}
+    <p class="notice">{{ t('billing.pay.code', code=user.public_id) }}</p>
+    <p class="muted">{{ t('billing.pay.manual') }}</p>
+    {% if support_email %}<p>{{ t('billing.pay.support') }} <a href="mailto:{{ support_email }}">{{ support_email }}</a></p>{% endif %}
+    <p class="muted small">{{ t('billing.pay.no_card') }}</p>
+  </section>
+  {% elif not billing_enabled and support_email %}
+  <p class="muted">{{ t('billing.pay.support') }} <a href="mailto:{{ support_email }}">{{ support_email }}</a></p>
+  {% endif %}
+</div>
+{% endblock %}

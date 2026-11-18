@@ -1,0 +1,24 @@
+/* Learning pages (Today, tests, daily task, progress). Builds on app.css; no new colours. */
+.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; }
+.facts li { padding-left: 1.2rem; position: relative; }
+.facts li::before { content: ""; position: absolute; left: .15rem; top: .62em; width: .5rem; height: .5rem; border-radius: 50%; background: var(--teal); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr)); gap: .5rem; }
+.stats .stat { font-size: .88rem; color: var(--muted); }
+.stat { color: var(--muted); }
+.stat b { font-size: 1.8rem; }
+.question { margin: 0; }
+.zh-sm { font-size: 1.05rem; color: var(--muted); }
+.option .zh { font-size: 1.3rem; }
+.option.static { cursor: default; }
+.option.static:hover { border-color: var(--ctl); }
+.option.static.correct:hover { border-color: var(--green); }
+.option.static.wrong:hover { border-color: var(--red); }
+.center-row { justify-content: center; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.rows li { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid var(--line); }
+.rows li:last-child { border-bottom: 0; }
+.rows .val { text-align: right; font-weight: 600; color: var(--navy); }
+.focus .timer { font-size: 2.2rem; font-weight: 700; margin: .2rem 0 .6rem; color: var(--navy); font-variant-numeric: tabular-nums; }
+.focus [hidden] { display: none; }
+.lang-note { font-size: .85rem; color: var(--muted); margin: 0 0 .3rem; }
+@media (max-width: 420px) { .rows li { flex-direction: column; gap: .1rem; } .rows .val { text-align: left; } }

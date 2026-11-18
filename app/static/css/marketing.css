@@ -1,0 +1,44 @@
+/* Public pages (landing, pricing, privacy, terms). Loaded on top of app.css; reuses its colour tokens. */
+.marketing { padding-top: .25rem; }
+.marketing section.stack > h2 + p { margin-top: .3rem; }
+
+/* hero */
+.hero { padding: 1rem 0 .5rem; }
+.eyebrow { margin: 0; font-size: .9rem; font-weight: 700; color: var(--teal-dark); }
+.hero h1 { font-size: 1.9rem; line-height: 1.2; }
+.lead { font-size: 1.1rem; }
+.hero-zh .zh { color: var(--navy); font-weight: 700; }
+.cta-row .btn { min-height: 48px; padding-inline: 1.4rem; }
+
+/* four steps */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; counter-reset: step; }
+.steps > li { counter-increment: step; display: flex; gap: .9rem; align-items: flex-start; }
+.steps > li::before { content: counter(step); flex: none; display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  background: var(--teal); color: #fff; font-weight: 700; }
+.steps h3 { margin-top: .15rem; } .steps p { margin: 0; }
+
+/* example proposal */
+.sample-now { font-weight: 600; margin-bottom: 0; }
+.sample-items { margin: 0; padding: 0; list-style: none; display: grid; gap: .5rem; }
+.sample-items li { background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: .7rem 1rem; }
+
+/* lists */
+.bullets { margin: 0; padding-left: 1.2rem; display: grid; gap: .5rem; }
+.bullets.ticks { list-style: none; padding-left: 0; }
+.bullets.ticks li { padding-left: 1.7rem; position: relative; }
+.bullets.ticks li::before { content: "✓"; position: absolute; left: 0; top: 0; color: var(--green); font-weight: 700; }
+
+/* pricing */
+.price { font-size: 2.1rem; font-weight: 800; color: var(--navy); margin: .2rem 0; line-height: 1.1; }
+.plan { text-align: center; }
+.plan h3 { font-size: 1.15rem; }
+
+/* legal pages */
+.legal h2 { font-size: 1.15rem; }
+.operator { display: grid; grid-template-columns: max-content 1fr; gap: .4rem 1rem; margin: 0; }
+.operator dt { font-weight: 600; } .operator dd { margin: 0; }
+@media (max-width: 479px) { .operator { grid-template-columns: 1fr; gap: 0; } .operator dd { margin-bottom: .6rem; } }
+/* a value the owner still has to fill in must be impossible to miss */
+.placeholder { background: #fff0a6; color: #4a3600; padding: .05rem .4rem; border-radius: 6px; font-weight: 600; }
+
+@media (min-width: 720px) { .hero h1 { font-size: 2.4rem; } }

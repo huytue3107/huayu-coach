@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.task.done_title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<section class="card accent center stack">
+  <h1>{{ t('learn.task.done_title') }}</h1>
+  <p class="stat"><b>{{ view.correct_count }} / {{ view.total }}</b>{{ t('learn.task.done_score') }}</p>
+  <p>{{ t('learn.task.done_body') }}</p>
+  {% if repeats %}<p class="muted small">{{ t('learn.task.repeat_note') }}</p>{% endif %}
+  <div class="row center-row">
+    <a class="btn btn-primary" href="/today">{{ t('learn.common.back_today') }}</a>
+    <a class="btn btn-secondary" href="/progress">{{ t('learn.task.see_progress') }}</a>
+  </div>
+</section>
+{% endblock %}

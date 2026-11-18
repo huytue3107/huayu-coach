@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "learn/_macros.html" import text_flags, explanation_lang with context %}
+{% block title %}{{ t('learn.task.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="progress" role="progressbar" aria-label="{{ t('learn.common.progress_aria') }}" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ view.answered_count }}"><span style="width: {{ (100 * view.answered_count / total) | round | int }}%"></span></div>
+  <section class="card {{ 'accent' if attempt.is_correct else 'accent-orange' }} stack" aria-live="polite">
+    <h1>{% if attempt.is_correct %}{{ t('learn.feedback.correct') }}{% else %}{{ t('learn.feedback.wrong') }}{% endif %}</h1>
+    <p class="zh question" lang="zh-TW">{{ q.question_zh }}</p>
+    <div class="option-grid">
+      <div class="option static {{ 'correct' if attempt.is_correct else 'wrong' }}">
+        <span class="small muted">{{ t('learn.feedback.your_answer') }}</span><br>
+        {% if selected_zh %}<span class="zh" lang="zh-TW">{{ attempt.selected_text }}</span>{% elif locale != 'vi' and 'vi' in text_flags(attempt.selected_text) %}<span lang="vi">{{ attempt.selected_text }}</span>{% else %}{{ attempt.selected_text }}{% endif %}
+      </div>
+      {% if not attempt.is_correct %}
+      <div class="option static correct">
+        <span class="small muted">{{ t('learn.feedback.right_answer') }}</span><br>
+        {% if correct_zh %}<span class="zh" lang="zh-TW">{{ correct_text }}</span>{% elif locale != 'vi' and 'vi' in text_flags(correct_text) %}<span lang="vi">{{ correct_text }}</span>{% else %}{{ correct_text }}{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% if explanation %}
+    {% set elang = explanation_lang(q, explanation) | trim %}
+    {% set own = {'vi': 'vi', 'zh-TW': 'zh-TW', 'en': 'en'}.get(locale, 'vi') %}
+    <div class="card soft">
+      <h3>{{ t('learn.feedback.why') }}</h3>
+      {# The explanation comes from the learner's own language when the question has one. When it does not, it is shown in the
+         language it is written in, and this label says which one, instead of silently mixing languages. #}
+      {% if elang and elang != own %}<p class="lang-note">{{ t('learn.feedback.expl_lang_' ~ ('zh' if elang == 'zh-TW' else elang)) }}</p>{% endif %}
+      <p{% if elang and elang != own %} lang="{{ elang }}"{% endif %}>{{ explanation }}</p>
+    </div>
+    {% endif %}
+    <a class="btn btn-primary btn-block" href="/task">{% if finished %}{{ t('learn.feedback.finish') }}{% else %}{{ t('learn.feedback.next') }}{% endif %}</a>
+  </section>
+  <p class="center small"><a href="/stuck">{{ t('learn.common.stuck_link') }}</a></p>
+</div>
+{% endblock %}

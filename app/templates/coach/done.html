@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% from "coach/_rating.html" import rating with context %}
+{% block title %}{{ t('coach.done.title_' ~ view.kind) }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/coach.css">{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{{ t('coach.done.title_' ~ view.kind) }}</h1>
+
+  {% if view.kind == 'superseded' %}
+    <div class="card accent-orange stack">
+      <p>{{ t('coach.done.superseded') }}</p>
+      <p class="row">
+        <a class="btn btn-primary" href="/stuck">{{ t('coach.done.again') }}</a>
+        {% if view.newer_id %}<a class="btn btn-secondary" href="/proposal/{{ view.newer_id }}">{{ t('coach.proposal.open_other_link') }}</a>{% endif %}
+      </p>
+    </div>
+
+  {% elif view.kind == 'rejected' %}
+    <div class="card accent stack">
+      <p>{{ t('coach.done.rejected') }}</p>
+    </div>
+
+  {% else %}
+    {% if view.changes %}
+    <div class="card accent stack">
+      <h2>{{ t('coach.done.changes_title') }}</h2>
+      <ul class="change-list">
+        {% for line in view.changes %}<li>{{ line.text }}</li>{% endfor %}
+      </ul>
+      {% if view.version %}<p class="hint">{{ t('coach.done.version', version=view.version) }}</p>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if view.rest_date %}
+    <div class="card soft stack">
+      <p>{{ t('coach.done.rest_chosen', date=view.rest_date) }}</p>
+      <p><a href="/rest">{{ t('coach.done.rest_link') }}</a></p>
+    </div>
+    {% endif %}
+
+    {% if view.kind == 'nochange' %}
+    <div class="card accent stack"><p>{{ t('coach.history.nothing') }}</p></div>
+    {% endif %}
+
+    {% if view.left_out %}
+    <div class="card stack">
+      <h2>{{ t('coach.done.left_out_title') }}</h2>
+      <p class="hint">{{ t('coach.done.partial_note') }}</p>
+      <ul class="change-list muted">
+        {% for item in view.left_out %}<li>{{ item.text }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {% if view.can_rate %}
+    {% if view.rated %}
+      <p class="card soft">{{ t('coach.feedback.thanks') }}</p>
+    {% else %}
+      <form method="post" action="/proposal/{{ view.id }}/feedback" class="card stack">
+        <input type="hidden" name="csrf" value="{{ csrf_token }}">
+        <div>
+          <h2>{{ t('coach.feedback.title') }}</h2>
+          <p class="hint">{{ t('coach.feedback.lead') }}</p>
+        </div>
+        {{ rating('clarity') }}
+        {{ rating('helpfulness') }}
+        {{ rating('pressure') }}
+        <div class="field">
+          <label for="comment">{{ t('coach.feedback.comment_label') }}</label>
+          <textarea id="comment" name="comment" maxlength="500" rows="3"></textarea>
+          <p class="hint">{{ t('coach.feedback.comment_hint') }}</p>
+        </div>
+        <button class="btn btn-secondary btn-block" type="submit">{{ t('coach.feedback.submit') }}</button>
+      </form>
+    {% endif %}
+  {% endif %}
+
+  <p class="row">
+    <a class="btn btn-primary" href="/today">{{ t('coach.done.back') }}</a>
+    <a class="btn btn-secondary" href="/plan">{{ t('coach.done.plan_link') }}</a>
+  </p>
+</section>
+{% endblock %}

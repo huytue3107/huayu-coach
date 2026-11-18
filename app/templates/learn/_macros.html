@@ -1,0 +1,33 @@
+{# Local date written the way the reader's language writes it (month names come from learn.fmt.m1..m12). #}
+{% macro fdate(d) -%}{{ t('learn.fmt.date', day=d.day, month=t('learn.fmt.m' ~ d.month), year=d.year) }}{%- endmacro %}
+
+{# Which scripts a short text uses: 'cjk' when it has Han characters or zhuyin, 'vi' when it has letters only Vietnamese uses,
+   both words when both, '' otherwise. The question bank mixes Chinese and Vietnamese text under every interface language. #}
+{% macro text_flags(s) -%}
+{%- set ns = namespace(cjk=false, vi=false) -%}
+{%- for ch in s -%}
+  {%- if ch >= '　' and ch <= '鿿' -%}{%- set ns.cjk = true -%}
+  {%- elif ch | lower in 'ăâđêôơưàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ' -%}{%- set ns.vi = true -%}
+  {%- endif -%}
+{%- endfor -%}
+{{- 'cjk' if ns.cjk else '' }}{{ ' ' if ns.cjk and ns.vi else '' }}{{ 'vi' if ns.vi else '' -}}
+{%- endmacro %}
+
+{# One answer option. Chinese goes in a zh-TW span (o.zh comes from the router). Other text keeps the page language unless it is
+   recognisably Vietnamese and the page is not, in which case it is marked lang="vi" (WCAG 3.1.2). #}
+{% macro option_text(o) -%}
+{%- if o.zh -%}<span class="zh" lang="zh-TW">{{ o.text }}</span>
+{%- elif locale != 'vi' and 'vi' in text_flags(o.text) -%}<span lang="vi">{{ o.text }}</span>
+{%- else -%}{{ o.text }}
+{%- endif -%}
+{%- endmacro %}
+
+{# Language an explanation is written in, found by which field of the question it came from: 'vi', 'zh-TW', 'en' or ''.
+   Three seed rows hold Chinese only in their Vietnamese field; Chinese text with no Vietnamese letter counts as Chinese. #}
+{% macro explanation_lang(q, text) -%}
+{%- set flags = text_flags(text) -%}
+{%- if text == q.explanation_en -%}en
+{%- elif text == q.explanation_zh -%}zh-TW
+{%- elif text == q.explanation_vi -%}{{ 'zh-TW' if flags == 'cjk' else 'vi' }}
+{%- endif -%}
+{%- endmacro %}

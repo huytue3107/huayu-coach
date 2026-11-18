@@ -1,0 +1,45 @@
+# Caddy 2 in front of the app (Docker setup). {$DOMAIN} comes from .env through compose.yml.
+# NOT RUN YET (no Caddy on the development Mac). Check it on the server with:  docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile
+# The DNS A record of that name must point to this server, and ports 80 and 443 must be open: Caddy then gets and renews
+# the Let's Encrypt certificate by itself and redirects http to https.
+
+# Global options (this block must be the first thing in the file).
+# Server timeouts: the app has ONE SQLite writer. A client that opens a request and then stalls (a hung upload, a slowloris
+# attack) must not be able to keep the app busy, so Caddy cuts such connections here. Values are for phones on slow networks
+# and for the largest legitimate request (the 1 MB question import), with room to spare.
+{
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 30s
+			idle 2m
+		}
+	}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# The app already sends Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy,
+	# Permissions-Policy and (in production) Strict-Transport-Security. Do NOT repeat those here: the browser would receive
+	# each of them twice. Caddy only adds a header the app does not send.
+	header Cross-Origin-Opener-Policy same-origin
+
+	# Request body cap. Forms and settings are tiny; the biggest legitimate upload is the admin question import, which the
+	# app itself limits to 1 MB (plus a little multipart overhead). 3 MB leaves room and refuses anything bigger with 413
+	# before it reaches the app.
+	request_body {
+		max_size 3MB
+	}
+
+	# X-Forwarded-For: Caddy does NOT trust a value sent by the visitor. Unless the sender is listed in `trusted_proxies`
+	# (nothing is, here), it ignores the incoming header and sets it from the real connection address. That is what the app's
+	# rate limiter reads (HUAYU_TRUSTED_PROXY=true), so a visitor cannot forge their IP. If you ever put another proxy or a
+	# CDN in front of Caddy, add it to the global `servers { trusted_proxies ... }` option, otherwise every visitor
+	# will look like that proxy.
+	#
+	# No `log` directive on purpose: Caddy writes no access log, and the app's own access log is off too (Dockerfile),
+	# because the password-reset link /reset/<token> carries a live credential in its URL path. Do not add `log` here
+	# without removing that path from what is logged.
+	reverse_proxy app:8000
+}

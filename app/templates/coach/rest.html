@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ t('coach.rest.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/coach.css">{% endblock %}
+{% block content %}
+<section class="stack">
+  <div class="stack">
+    <h1>{{ t('coach.rest.title') }}</h1>
+    <p class="muted">{{ t('coach.rest.lead') }}</p>
+  </div>
+
+  {% if paused %}
+  <div class="card soft stack">
+    <p><strong>{% if open_ended %}{{ t('coach.rest.status_open') }}{% else %}{{ t('coach.rest.status_days', date=until) }}{% endif %}</strong></p>
+    <form method="post" action="/resume">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <button class="btn btn-primary btn-block big-btn" type="submit">{{ t('coach.rest.resume_btn') }}</button>
+    </form>
+    <p class="hint">{{ t('coach.rest.resume_hint') }}</p>
+  </div>
+  {% endif %}
+
+  <form method="post" action="/rest" class="stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <fieldset class="plain">
+      <legend>{{ t('coach.rest.legend') }}</legend>
+      <div class="choices">
+        <label class="choice big"><input type="radio" name="days" value="1" required><span>{{ t('coach.rest.one_day') }}</span></label>
+        <label class="choice big"><input type="radio" name="days" value="3"><span>{{ t('coach.rest.three_days') }}</span></label>
+        <label class="choice big"><input type="radio" name="days" value="7"><span>{{ t('coach.rest.seven_days') }}</span></label>
+        <label class="choice big">
+          <input type="radio" name="days" value="until_back">
+          <span><strong>{{ t('coach.rest.until_back') }}</strong><span class="muted small reason-desc">{{ t('coach.rest.until_back_desc') }}</span></span>
+        </label>
+      </div>
+    </fieldset>
+    <button class="btn {% if paused %}btn-secondary{% else %}btn-primary{% endif %} btn-block" type="submit">{% if paused %}{{ t('coach.rest.submit_change') }}{% else %}{{ t('coach.rest.submit') }}{% endif %}</button>
+    <p class="hint center">{{ t('coach.rest.note') }}</p>
+  </form>
+</section>
+{% endblock %}

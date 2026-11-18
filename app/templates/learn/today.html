@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.today.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>{{ t('learn.today.title') }}</h1>
+
+  {% if v.state == 'resting' %}
+    {% include "learn/_rest.html" %}
+
+  {% elif v.state == 'placement' %}
+    <section class="card accent stack">
+      <h2>{{ t('learn.today.placement_title') }}</h2>
+      <p>{{ t('learn.today.placement_body') }}</p>
+      <a class="btn btn-primary btn-block" href="/placement">{{ t('learn.today.placement_cta') }}</a>
+    </section>
+
+  {% elif v.state == 'noplan' %}
+    <section class="card warn stack">
+      <h2>{{ t('learn.today.noplan_title') }}</h2>
+      <p>{{ t('learn.today.noplan_body') }}</p>
+      <a class="btn btn-primary btn-block" href="/plan">{{ t('learn.today.noplan_cta') }}</a>
+    </section>
+
+  {% else %}
+    {% set c = v.card %}
+    <section class="card accent stack">
+      <div class="row">
+        <h2 class="grow">{{ t('learn.today.task_title') }}</h2>
+        {% if c.status == 'done' %}<span class="badge ok">{{ t('learn.today.done_badge') }}</span>{% endif %}
+      </div>
+      {% if c.status == 'empty' %}
+        <p class="muted">{{ t('learn.today.empty') }}</p>
+      {% else %}
+        <ul class="facts">
+          <li>{{ t('learn.today.minutes', n=c.minutes) }}</li>
+          <li>{{ t('learn.today.exercises', n=c.exercises) }}</li>
+          {% if c.new_grammar is not none %}<li>{{ t('learn.today.grammar', n=c.new_grammar) }}</li>{% endif %}
+          {% if c.sessions > 1 %}<li>{{ t('learn.today.sessions', n=c.sessions, m=c.session_minutes) }}</li>{% endif %}
+          {% if c.focus_minutes %}<li>{{ t('learn.today.focus', m=c.focus_minutes) }}</li>{% endif %}
+        </ul>
+        {% if c.status != 'new' %}
+          <div class="progress" role="progressbar" aria-label="{{ t('learn.common.progress_aria') }}" aria-valuemin="0" aria-valuemax="{{ c.exercises }}" aria-valuenow="{{ c.answered }}"><span style="width: {{ (100 * c.answered / c.exercises) | round | int }}%"></span></div>
+          <p class="muted small">{{ t('learn.today.progress', done=c.answered, total=c.exercises) }}</p>
+        {% endif %}
+        {% if c.plan_changed %}<p class="notice">{{ t('learn.today.plan_changed') }}</p>{% endif %}
+        {% if c.repeats %}<p class="muted small">{{ t('learn.task.repeat_note') }}</p>{% endif %}
+        <a class="btn btn-primary btn-block" href="/task">{% if c.status == 'done' %}{{ t('learn.today.see_done') }}{% elif c.status == 'started' %}{{ t('learn.today.continue') }}{% else %}{{ t('learn.today.start') }}{% endif %}</a>
+      {% endif %}
+    </section>
+
+    {% if v.posttest_ready %}
+    <section class="card soft stack">
+      <h2>{{ t('learn.today.posttest_title') }}</h2>
+      <p>{{ t('learn.today.posttest_body') }}</p>
+      <a class="btn btn-secondary" href="/posttest">{{ t('learn.today.posttest_cta') }}</a>
+    </section>
+    {% endif %}
+  {% endif %}
+
+  <section class="card stack">
+    <h2>{{ t('learn.today.stuck_title') }}</h2>
+    <p class="muted">{{ t('learn.today.stuck_body') }}</p>
+    <a class="btn btn-secondary" href="/stuck">{{ t('learn.common.stuck_link') }}</a>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('learn.today.week_title') }}</h2>
+    {% if v.week.answers or v.week.tasks_done %}
+      {# Only numbers above zero are shown as tiles: a "0" tile reads like a score to catch up on. The progress page has the full picture. #}
+      <div class="stats">
+        {% if v.week.answers %}<div class="stat"><b>{{ v.week.answers }}</b>{{ t('learn.today.week_answers') }}</div>{% endif %}
+        {% if v.week.correct %}<div class="stat"><b>{{ v.week.correct }}</b>{{ t('learn.today.week_correct') }}</div>{% endif %}
+        {% if v.week.tasks_done %}<div class="stat"><b>{{ v.week.tasks_done }}</b>{{ t('learn.today.week_tasks') }}</div>{% endif %}
+      </div>
+    {% else %}
+      <p class="muted">{{ t('learn.today.week_empty') }}</p>
+    {% endif %}
+    <a href="/progress">{{ t('learn.today.week_link') }}</a>
+  </section>
+</div>
+{% endblock %}

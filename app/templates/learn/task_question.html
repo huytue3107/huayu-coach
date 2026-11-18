@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% from "learn/_macros.html" import option_text with context %}
+{% block title %}{{ t('learn.task.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="row">
+    <h1 class="grow">{{ t('learn.task.title') }}</h1>
+    <span class="badge">{{ t('learn.common.question_of', n=number, total=total) }}</span>
+  </div>
+  <div class="progress" role="progressbar" aria-label="{{ t('learn.common.progress_aria') }}" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ number - 1 }}"><span style="width: {{ (100 * (number - 1) / total) | round | int }}%"></span></div>
+  {% if sessions > 1 %}<p class="muted small">{{ t('learn.today.sessions', n=sessions, m=session_minutes) }}</p>{% endif %}
+
+  {% if focus_minutes %}
+  <section class="card soft focus" id="focus-timer" data-minutes="{{ focus_minutes }}">
+    <p class="small">{{ t('learn.task.focus_label', m=focus_minutes) }}</p>
+    <p class="timer" data-role="time" role="timer">{{ '%02d:00' % focus_minutes }}</p>
+    <div class="row">
+      <button type="button" class="btn btn-secondary btn-sm" data-role="toggle" data-start="{{ t('learn.timer.start') }}" data-pause="{{ t('learn.timer.pause') }}">{{ t('learn.timer.start') }}</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-role="reset" hidden>{{ t('learn.timer.reset') }}</button>
+    </div>
+    <p class="notice" data-role="note" hidden>{{ t('learn.timer.done') }}</p>
+    <p class="sr-only" data-role="announce" role="status"></p>
+  </section>
+  {% endif %}
+
+  <form method="post" action="/task/answer" class="card stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="question_id" value="{{ q.id }}">
+    <input type="hidden" name="nonce" value="{{ nonce }}">
+    {# The grammar topic is deliberately not shown here: for several questions it IS the answer. Only the skill is. #}
+    {% if q.skill in ('vocab', 'grammar', 'reading') %}<p class="muted small"><span class="badge">{{ t('learn.skill.' ~ q.skill) }}</span></p>{% endif %}
+    {% if nonce %}<p class="muted small" data-role="seen-before">{{ t('learn.task.seen_before') }}</p>{% endif %}
+    <p class="zh question" lang="zh-TW">{{ q.question_zh }}</p>
+    <div class="option-grid">
+      {% for o in options %}
+      <button class="option" type="submit" name="choice" value="{{ o.index }}">{{ option_text(o) }}</button>
+      {% endfor %}
+    </div>
+  </form>
+
+  <p class="center small"><a href="/stuck">{{ t('learn.common.stuck_link') }}</a></p>
+</div>
+{% endblock %}
+{% block scripts %}{% if focus_minutes %}<script src="/static/js/learn.js" defer></script>{% endif %}{% endblock %}

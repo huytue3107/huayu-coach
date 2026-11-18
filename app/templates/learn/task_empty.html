@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.task.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<section class="card soft stack">
+  <h1>{{ t('learn.task.empty_title') }}</h1>
+  <p>{{ t('learn.task.empty_body') }}</p>
+  <a class="btn btn-primary" href="/today">{{ t('learn.common.back_today') }}</a>
+</section>
+{% endblock %}

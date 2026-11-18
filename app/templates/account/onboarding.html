@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "auth/_macros.html" import field with context %}
+{% block title %}{{ t('account.onboarding.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/auth.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div>
+    <h1>{{ t('account.onboarding.title') }}</h1>
+    <p class="muted">{{ t('account.onboarding.intro') }}</p>
+  </div>
+
+  <section class="card stack" aria-labelledby="ob-language">
+    <h2 id="ob-language">{{ t('account.onboarding.step_language') }}</h2>
+    <p class="muted">{{ t('account.onboarding.language_hint') }}</p>
+    <form method="post" action="/onboarding" class="lang-buttons">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <input type="hidden" name="action" value="language">
+      {% for code, name in languages %}
+      <button class="btn {{ 'btn-primary' if code == locale else 'btn-secondary' }}" type="submit" name="locale" value="{{ code }}" lang="{{ code }}"{% if code == locale %} aria-pressed="true"{% endif %}>{{ name }}</button>
+      {% endfor %}
+    </form>
+  </section>
+
+  <form method="post" action="/onboarding" class="stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="action" value="finish">
+
+    <section class="card stack" aria-labelledby="ob-you">
+      <h2 id="ob-you">{{ t('account.onboarding.step_you') }}</h2>
+      {{ field('display_name', t('account.onboarding.name'), value=form.display_name, autocomplete='nickname', required=False, maxlength=limits['max_name'], hint=t('account.onboarding.name_hint')) }}
+      {% if not has_plan %}
+      <fieldset class="field" aria-describedby="h-daily_minutes{% if errors.daily_minutes %} e-daily_minutes{% endif %}">
+        <legend>{{ t('account.onboarding.minutes_title') }}</legend>
+        <p class="hint" id="h-daily_minutes">{{ t('account.onboarding.minutes_hint') }}</p>
+        <div class="choices">
+          {% for m in presets %}
+          <label class="choice big"><input type="radio" name="daily_minutes" value="{{ m }}"{% if form.daily_minutes == m %} checked{% endif %}><span>{{ t('account.onboarding.minutes_option', n=m) }}</span></label>
+          {% endfor %}
+        </div>
+        {% if errors.daily_minutes %}<p class="error-text" id="e-daily_minutes" role="alert">{{ t(errors.daily_minutes, **limits) }}</p>{% endif %}
+      </fieldset>
+      {% endif %}
+    </section>
+
+    <section class="card stack" aria-labelledby="ob-data">
+      <h2 id="ob-data">{{ t('account.onboarding.step_data') }}</h2>
+      <p>{{ t('account.onboarding.data_intro') }}</p>
+      <p class="small"><a href="/privacy">{{ t('account.onboarding.privacy_link') }}</a></p>
+      <div class="field">
+        <label class="choice"><input type="checkbox" name="consent_data" value="1" required{% if errors.consent_data %} aria-invalid="true" aria-describedby="e-consent_data"{% endif %}><span>{{ t('account.onboarding.consent_required') }}</span></label>
+        {% if errors.consent_data %}<p class="error-text" id="e-consent_data" role="alert">{{ t(errors.consent_data, **limits) }}</p>{% endif %}
+      </div>
+      <div class="field">
+        <label class="choice"><input type="checkbox" name="consent_llm" value="1" aria-describedby="h-consent_llm"{% if form.consent_llm %} checked{% endif %}><span>{{ t('account.onboarding.consent_llm') }}</span></label>
+        <p class="hint" id="h-consent_llm">{{ t('account.onboarding.consent_llm_hint') }}{% if not llm_enabled %} {{ t('account.onboarding.llm_inactive') }}{% endif %}</p>
+      </div>
+    </section>
+
+    <button class="btn btn-primary btn-block" type="submit">{{ t('account.onboarding.submit') }}</button>
+  </form>
+</div>
+{% endblock %}

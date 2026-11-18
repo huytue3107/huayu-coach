@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "learn/_macros.html" import option_text with context %}
+{% block title %}{{ t('learn.' ~ kind ~ '.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div class="row">
+    <h1 class="grow">{{ t('learn.' ~ kind ~ '.title') }}</h1>
+    <span class="badge">{{ t('learn.common.question_of', n=number, total=total) }}</span>
+  </div>
+  <p class="muted">{{ t('learn.' ~ kind ~ '.intro') }}</p>
+  <div class="progress" role="progressbar" aria-label="{{ t('learn.common.progress_aria') }}" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ number - 1 }}"><span style="width: {{ (100 * (number - 1) / total) | round | int }}%"></span></div>
+
+  <form method="post" action="{{ action }}" class="card stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="question_id" value="{{ q.id }}">
+    <input type="hidden" name="nonce" value="{{ nonce }}">
+    <p class="zh question" lang="zh-TW">{{ q.question_zh }}</p>
+    <p class="muted small">{{ t('learn.common.pick_one') }}</p>
+    <div class="option-grid">
+      {% for o in options %}
+      <button class="option" type="submit" name="choice" value="{{ o.index }}">{{ option_text(o) }}</button>
+      {% endfor %}
+    </div>
+  </form>
+</div>
+{% endblock %}

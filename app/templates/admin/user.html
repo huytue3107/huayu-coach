@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}{{ target.public_id }} · {{ t('admin.users.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <div class="row">
+    <h1 class="grow">{{ target.public_id }}</h1>
+    <span class="badge">{{ t('admin.role.' ~ target.role) }}</span>
+    <span class="badge {{ 'ok' if access.state in ('active', 'free', 'staff') else ('warn' if access.state == 'trialing' else 'bad') }}">{{ t('admin.access.' ~ access.state) }}{% if access.until %} · {{ fmt_date(access.until) }}{% endif %}</span>
+  </div>
+  <p class="muted small">{{ t('admin.user.privacy_note') }}</p>
+  <p><a href="/admin/users">{{ t('common.btn.back') }}</a></p>
+
+  <section class="card stack">
+    <h2>{{ t('admin.user.profile') }}</h2>
+    <dl class="kv">
+      <dt>{{ t('admin.users.col.email') }}</dt><dd>{{ target.email }}</dd>
+      <dt>{{ t('admin.user.locale') }}</dt><dd>{{ target.locale }}</dd>
+      <dt>{{ t('admin.user.timezone') }}</dt><dd>{{ target.timezone }}</dd>
+      <dt>{{ t('admin.users.col.level') }}</dt><dd>{{ target.level or '—' }}</dd>
+      <dt>{{ t('admin.users.col.created') }}</dt><dd>{{ fmt_dt(target.created_at) }}</dd>
+      <dt>{{ t('admin.users.col.last_login') }}</dt><dd>{{ fmt_dt(target.last_login_at) }}</dd>
+      <dt>{{ t('admin.user.onboarded') }}</dt><dd>{{ fmt_dt(target.onboarded_at) }}</dd>
+      <dt>{{ t('admin.user.paused') }}</dt><dd>{{ target.paused_until.isoformat() if target.paused_until else '—' }}</dd>
+    </dl>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.user.plan') }}</h2>
+    {% if plan %}
+    <dl class="kv">
+      <dt>{{ t('admin.user.plan_minutes') }}</dt><dd>{{ plan.daily_minutes }}</dd>
+      <dt>{{ t('admin.user.plan_grammar') }}</dt><dd>{{ plan.new_grammar }}</dd>
+      <dt>{{ t('admin.user.plan_exercises') }}</dt><dd>{{ plan.exercise_count }}</dd>
+      <dt>{{ t('admin.user.plan_sessions') }}</dt><dd>{{ plan.sessions_per_day }}</dd>
+      <dt>{{ t('admin.user.plan_focus') }}</dt><dd>{{ plan.focus_minutes or '—' }}</dd>
+      <dt>{{ t('admin.user.plan_topics') }}</dt><dd><span lang="zh-TW">{% for item in (plan.review_topics or []) %}{{ item.get('topic', '') }}{% if not loop.last %}、{% endif %}{% else %}—{% endfor %}</span></dd>
+      <dt>{{ t('admin.user.plan_version') }}</dt><dd>{{ plan.version }}</dd>
+    </dl>
+    {% else %}<p class="muted">{{ t('admin.user.no_plan') }}</p>{% endif %}
+  </section>
+
+  <section class="card stack actions">
+    <h2>{{ t('admin.user.actions') }}</h2>
+    {% if target.role == 'learner' %}
+    <form method="post" action="/admin/users/{{ target.id }}/grant" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <h3>{{ t('admin.user.grant_title') }}</h3>
+      <div class="grid two">
+        <div class="field"><label for="grant-days">{{ t('admin.user.grant_days') }}</label><input type="number" id="grant-days" name="days" min="1" max="365" value="7" required></div>
+        <div class="field"><label for="grant-note">{{ t('admin.user.note') }}</label><input type="text" id="grant-note" name="note" maxlength="200"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">{{ t('admin.user.grant_button') }}</button>
+    </form>
+    <hr>
+    <form method="post" action="/admin/users/{{ target.id }}/activate" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <h3>{{ t('admin.user.activate_title') }}</h3>
+      <p class="muted small">{{ t('admin.user.activate_help') }}</p>
+      {% if plans %}
+      <div class="grid two">
+        <div class="field"><label for="act-plan">{{ t('admin.user.plan_choice') }}</label>
+          <select id="act-plan" name="plan_code">{% for p in plans %}<option value="{{ p.code }}">{{ p.name.get(locale) or p.name.get('en') or p.code }} · {{ twd(p.price_twd) }}</option>{% endfor %}</select></div>
+        <div class="field"><label for="act-amount">{{ t('admin.user.amount') }}</label><input type="number" id="act-amount" name="amount" min="0" max="1000000">
+          <p class="hint">{{ t('admin.user.amount_hint') }}</p></div>
+        <div class="field"><label for="act-note">{{ t('admin.user.note') }}</label><input type="text" id="act-note" name="note" maxlength="300"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">{{ t('admin.user.activate_button') }}</button>
+      {% else %}<p class="muted">{{ t('admin.user.no_active_plans') }}</p>{% endif %}
+    </form>
+    <hr>
+    {% endif %}
+    {% if is_self %}
+    <div class="stack"><h3>{{ t('admin.user.role_title') }}</h3><p class="muted">{{ t('admin.user.role_self') }}</p></div>
+    {% else %}
+    <form method="post" action="/admin/users/{{ target.id }}/role" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <h3>{{ t('admin.user.role_title') }}</h3>
+      <div class="field"><label for="role-select">{{ t('admin.users.col.role') }}</label>
+        <select id="role-select" name="role">{% for r in roles %}<option value="{{ r }}"{% if target.role == r %} selected{% endif %}>{{ t('admin.role.' ~ r) }}</option>{% endfor %}</select></div>
+      <button class="btn btn-primary" type="submit">{{ t('admin.user.role_button') }}</button>
+    </form>
+    {% endif %}
+    <hr>
+    {% if target.role == 'learner' %}
+    <form method="post" action="/admin/users/{{ target.id }}/reset-placement" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <h3>{{ t('admin.user.placement_title') }}</h3>
+      <p class="muted small">{{ t('admin.user.placement_help') }}</p>
+      <button class="btn btn-secondary" type="submit">{{ t('admin.user.placement_button') }}</button>
+    </form>
+    <hr>
+    {% endif %}
+    <form method="post" action="/admin/users/{{ target.id }}/sessions" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <h3>{{ t('admin.user.sessions_title') }}</h3>
+      <p class="muted small">{{ t('admin.user.sessions_help') }}</p>
+      <button class="btn btn-danger" type="submit">{{ t('admin.user.sessions_button') }}</button>
+    </form>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.user.subs') }}</h2>
+    {% if subs %}<div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.user.sub_plan') }}</th><th>{{ t('admin.user.sub_status') }}</th><th>{{ t('admin.user.sub_provider') }}</th><th>{{ t('admin.user.sub_started') }}</th><th>{{ t('admin.user.sub_until') }}</th></tr></thead>
+      <tbody>{% for s in subs %}<tr><td>{{ s.plan_code or '—' }}</td><td>{{ s.status }}</td><td>{{ s.provider }}</td><td class="nowrap">{{ fmt_date(s.started_at) }}</td><td class="nowrap">{{ fmt_date(s.current_period_end) }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{{ t('admin.user.none') }}</p>{% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.user.payments') }}</h2>
+    {% if payments %}<div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.billing.when') }}</th><th class="num">{{ t('admin.billing.amount') }}</th><th>{{ t('admin.billing.provider') }}</th><th>{{ t('admin.billing.note') }}</th></tr></thead>
+      <tbody>{% for p in payments %}<tr><td class="nowrap">{{ fmt_dt(p.created_at) }}</td><td class="num nowrap">{{ twd(p.amount_twd) }}</td><td>{{ p.provider }}</td><td>{{ p.note or '—' }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{{ t('admin.user.none') }}</p>{% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.user.interruptions') }}</h2>
+    <p class="muted small">{{ t('admin.user.interruptions_note') }}</p>
+    {% if interruptions %}<div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.billing.when') }}</th><th>{{ t('admin.user.reason') }}</th><th>{{ t('admin.user.sub_status') }}</th></tr></thead>
+      <tbody>{% for reason, status, created in interruptions %}<tr><td class="nowrap">{{ fmt_dt(created) }}</td><td>{{ t('admin.reason.' ~ reason) }}</td><td>{{ t('admin.istatus.' ~ status) }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{{ t('admin.user.none') }}</p>{% endif %}
+  </section>
+</div>
+{% endblock %}

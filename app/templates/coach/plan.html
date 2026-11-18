@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}{{ t('coach.plan.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/coach.css">{% endblock %}
+{% block content %}
+<section class="stack">
+  <div class="stack">
+    <h1>{{ t('coach.plan.title') }}</h1>
+    <p class="muted">{{ t('coach.plan.own') }}</p>
+  </div>
+
+  {% if not plan %}
+    <p class="card warn">{{ t('coach.err.no_plan') }}</p>
+  {% else %}
+
+  {% if pending_id %}
+  <div class="card warn row">
+    <span class="grow">{{ t('coach.plan.pending') }}</span>
+    <a class="btn btn-secondary" href="/proposal/{{ pending_id }}">{{ t('coach.plan.pending_link') }}</a>
+  </div>
+  {% endif %}
+
+  <div class="card stack">
+    <div class="row">
+      <h2 class="grow">{{ t('coach.plan.current_title') }}</h2>
+      <span class="badge">{{ t('coach.plan.version', version=plan.version) }}</span>
+    </div>
+    <dl class="plan-numbers">
+      <div><dt>{{ t('coach.label.daily_minutes') }}</dt><dd>{{ plan.daily_minutes }}</dd></div>
+      <div><dt>{{ t('coach.label.new_grammar') }}</dt><dd>{{ plan.new_grammar }}</dd></div>
+      <div><dt>{{ t('coach.label.exercise_count') }}</dt><dd>{{ plan.exercise_count }}</dd></div>
+      {% if plan.sessions_per_day > 1 %}<div><dt>{{ t('coach.label.sessions_per_day') }}</dt><dd>{{ plan.sessions_per_day }}</dd></div>{% endif %}
+      {% if plan.focus_minutes %}<div><dt>{{ t('coach.label.focus_minutes') }}</dt><dd>{{ plan.focus_minutes }}</dd></div>{% endif %}
+    </dl>
+    <div>
+      <h3>{{ t('coach.plan.review_title') }}</h3>
+      {% if topics %}
+      <ul class="change-list">
+        {% for row in topics %}<li><span class="zh" lang="zh-TW">{{ row.topic }}</span> <span class="muted">{{ t('coach.plan.review_until', date=row.until) }}</span></li>{% endfor %}
+      </ul>
+      {% else %}
+      <p class="muted">{{ t('coach.plan.review_none') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="post" action="/plan" class="card stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <input type="hidden" name="expected_version" value="{{ plan.version }}">
+    <h2>{{ t('coach.plan.edit_title') }}</h2>
+    <div class="field">
+      <label for="daily_minutes">{{ t('coach.plan.daily_minutes') }}</label>
+      <input type="number" id="daily_minutes" name="daily_minutes" min="{{ limits.daily[0] }}" max="{{ limits.daily[1] }}" step="1" inputmode="numeric" value="{{ plan.daily_minutes }}" required>
+      <p class="hint">{{ t('coach.plan.daily_minutes_hint') }}</p>
+    </div>
+    <div class="field">
+      <label for="new_grammar">{{ t('coach.plan.new_grammar') }}</label>
+      <input type="number" id="new_grammar" name="new_grammar" min="{{ limits.grammar[0] }}" max="{{ limits.grammar[1] }}" step="1" inputmode="numeric" value="{{ plan.new_grammar }}" required>
+      <p class="hint">{{ t('coach.plan.new_grammar_hint') }}</p>
+    </div>
+    <div class="field">
+      <label for="exercise_count">{{ t('coach.plan.exercise_count') }}</label>
+      <input type="number" id="exercise_count" name="exercise_count" min="{{ limits.exercises[0] }}" max="{{ limits.exercises[1] }}" step="1" inputmode="numeric" value="{{ plan.exercise_count }}" required>
+      <p class="hint">{{ t('coach.plan.exercise_count_hint') }}</p>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">{{ t('coach.plan.save') }}</button>
+    <p class="hint">{{ t('coach.plan.save_hint') }}</p>
+  </form>
+
+  <div class="card stack">
+    <h2>{{ t('coach.plan.history_title') }}</h2>
+    {% if history %}
+    <ol class="history">
+      {% for entry in history %}
+      <li>
+        <div class="small muted">{{ entry.when }} · {{ t('coach.history.' ~ entry.who) }}{% if entry.done_url %} · <a href="{{ entry.done_url }}">{{ t('coach.history.details') }}</a>{% endif %}</div>
+        <ul class="change-list">
+          {% for line in entry.lines %}<li>{{ line }}</li>{% endfor %}
+        </ul>
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <p class="muted">{{ t('coach.plan.history_empty') }}</p>
+    {% endif %}
+  </div>
+
+  {% endif %}
+</section>
+{% endblock %}

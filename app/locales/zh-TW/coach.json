@@ -1,0 +1,259 @@
+{
+  "reason": {
+    "too_hard": {
+      "title": "我覺得太難了",
+      "desc": "目前的課程或練習超出我能負荷的程度。"
+    },
+    "no_time": {
+      "title": "我沒有時間",
+      "desc": "最近很忙，沒辦法像平常一樣安排學習時間。"
+    },
+    "need_rest": {
+      "title": "我需要休息",
+      "desc": "我覺得累或負擔太重，想休息一下。"
+    },
+    "distracted": {
+      "title": "我很容易分心",
+      "desc": "我可以開始學習，但很難一直保持專注。"
+    }
+  },
+  "stuck": {
+    "title": "是什麼讓學習變得吃力？",
+    "lead": "暫時停下來沒有關係，每位學習者都會遇到。我們只是想了解你的狀況，不會催促你。",
+    "promise": "在你同意之前，你的學習計畫不會有任何改變。",
+    "legend": "最主要的原因是什麼？",
+    "minutes_label": "今天大約有幾分鐘可以學習？（選填）",
+    "minutes_hint": "請輸入 5 到 240 分鐘。我們會用它來建議合適的每日學習時間。",
+    "note_label": "還有什麼想補充的嗎？（選填）",
+    "note_hint": "這是你的私人備註，最多 500 字。它不會用來計算建議，也絕不會傳送給 AI 服務。",
+    "submit": "看看我的選項",
+    "open_proposal": "你還有一則建議等著你決定。",
+    "open_proposal_link": "查看建議",
+    "rest_link": "只是想休息嗎？現在就休息"
+  },
+  "summary": {
+    "too_hard": "你說現在覺得太難了。學習華語時這很正常，也不代表你不夠好。以下根據你的學習計畫和最近的作答，提供幾個輕鬆一點的調整方式。有幫助的就選，不需要的就略過。",
+    "no_time": "你說現在沒有足夠的時間。這完全可以理解：學習計畫要符合你的生活才有用。以下是幾種讓計畫變小的方式。有幫助的就選，不需要的就略過。",
+    "need_rest": "你說你需要休息。這是很好的停下來的理由，你不需要多做解釋。以下是一段短暫的休息，你可以接受，也可以維持原本的計畫。",
+    "distracted": "你說很難保持專注。每個人都會有這樣的時候。以下是幾個小調整，讓每次學習更容易完成。有幫助的就選，不需要的就略過。",
+    "default": "以下是根據你的學習計畫提供的幾個輕鬆建議。有幫助的就選，不需要的就略過。"
+  },
+  "item_title": {
+    "reduce_new_grammar": "減少新句型",
+    "change_exercise_count": "減少練習題數",
+    "change_daily_minutes": "縮短每日學習時間",
+    "split_session": "把學習拆成幾個短時段",
+    "pomodoro": "專注短時段學習",
+    "take_rest": "先休息一下",
+    "review_topic": "再複習一次比較難的主題",
+    "unknown": "一則建議"
+  },
+  "item": {
+    "reduce_new_grammar": "每天的新句型：{old} → {new} 個。",
+    "reduce_new_grammar_plain": "每天的新句型：{new} 個。",
+    "change_exercise_count": "每天的練習題：{old} → {new} 題。",
+    "change_exercise_count_plain": "每天的練習題：{new} 題。",
+    "change_daily_minutes": "每日學習時間：{old} → {new} 分鐘。",
+    "change_daily_minutes_plain": "每日學習時間：{new} 分鐘。",
+    "split_session": "把每天的學習拆成 {sessions} 個短時段（目前：{old} 個）。",
+    "split_session_plain": "把每天的學習拆成 {sessions} 個短時段。",
+    "pomodoro": "以 {minutes} 分鐘為一段專注學習，每段之間短暫休息。",
+    "take_rest": "休息 {days} 天。這段時間不需要學習，你也可以隨時提早回來。",
+    "take_rest_one": "休息 1 天。這段時間不需要學習，你也可以隨時提早回來。",
+    "review_topic": "接下來一週多練習一點「{topic}」。",
+    "unknown": "這個版本的應用程式無法說明的建議。"
+  },
+  "evidence": {
+    "self_report": "你告訴我們：「{reason}」。",
+    "plan_value": "你目前的計畫，{field}：{value}。",
+    "accuracy": "最近 {days} 天，你的{skill}題目答對了 {correct} 題，共 {total} 題。",
+    "few_data_zero": "我們還沒有你的{skill}作答紀錄，所以無法判斷你學得如何，也不會亂猜。",
+    "few_data_one": "到目前為止，我們只有你 1 題的{skill}作答紀錄。資料太少，無法判斷學習狀況，所以不顯示百分比。",
+    "few_data": "到目前為止，我們只有你 {total} 題的{skill}作答紀錄。資料太少，無法判斷學習狀況，所以不顯示百分比。",
+    "weak_topic": "最近 {days} 天，你在「{topic}」答錯了 {wrong} 題。",
+    "completion": "最近 {days} 天，你完成了 {scheduled} 項每日任務中的 {done} 項。",
+    "available_minutes": "你說今天大約有 {value} 分鐘。",
+    "plan_at_minimum": "你的計畫已經是最輕鬆的設定，所以休息是唯一更輕鬆的選擇。"
+  },
+  "skill": {
+    "grammar": "文法",
+    "vocab": "詞彙",
+    "reading": "閱讀"
+  },
+  "label": {
+    "daily_minutes": "每日學習時間（分鐘）",
+    "new_grammar": "每天的新句型數",
+    "exercise_count": "每天的練習題數",
+    "sessions_per_day": "每天的學習時段數",
+    "focus_minutes": "專注時段（分鐘）"
+  },
+  "field": {
+    "daily_minutes": "每日學習時間：{old} → {new} 分鐘",
+    "new_grammar": "每天的新句型：{old} → {new} 個",
+    "exercise_count": "每天的練習題：{old} → {new} 題",
+    "sessions_per_day": "每天的學習時段：{old} → {new} 個",
+    "focus_minutes": "專注時段長度：{old} → {new} 分鐘",
+    "review_topics": "再複習的主題：{old} → {new}",
+    "rest_until": "休息：你的下一個學習日是 {new}",
+    "unknown": "你的計畫有變動：{old} → {new}"
+  },
+  "value": {
+    "none": "未設定",
+    "sep": "、"
+  },
+  "date": {
+    "fmt": "{y}年{m}月{d}日"
+  },
+  "proposal": {
+    "title": "我們的發現如下",
+    "notice": "目前還沒有任何改變。只有在你確認後，你的計畫才會改變。",
+    "you_said": "你告訴我們：",
+    "ai_label": "由 AI 撰寫的說明",
+    "ai_note": "由營運單位所選的 AI 撰寫。下方的建議與所有數字都來自固定的規則，而且只有你勾選的項目才會被套用。如果這段文字與下方清單不一致，請以清單為準。",
+    "glance": "簡單來說：{titles}。",
+    "items_title": "建議項目",
+    "items_hint": "請勾選你想要的項目。我們不會幫你預先勾選。",
+    "evidence_title": "我們為什麼這樣建議",
+    "btn_selected": "接受已勾選的項目",
+    "btn_all": "全部接受",
+    "btn_reject": "維持目前的計畫",
+    "manual": "想自己決定數字嗎？編輯你的學習計畫",
+    "outcome_accepted": "你已接受這則建議的全部內容。",
+    "outcome_partial": "你已接受這則建議的一部分。",
+    "outcome_rejected": "你選擇維持原本的計畫。",
+    "outcome_superseded": "有更新的建議，或你自己調整了計畫，所以這則建議已被取代。",
+    "see_result": "查看結果",
+    "ask_again": "告訴我們你現在的狀況",
+    "stale_title": "自從這則建議產生後，你的計畫已經改變",
+    "stale_body": "這裡的數字是根據較舊版本的計畫算出來的，所以無法套用。沒有任何內容被更改。重新取得建議只需要一下子。",
+    "open_other": "你有一則更新的建議正在等待。",
+    "open_other_link": "查看建議",
+    "status_none": "這則建議沒有任何項目。"
+  },
+  "done": {
+    "title_changed": "你的計畫已更新",
+    "title_rest": "好好休息",
+    "title_rejected": "你的計畫維持不變",
+    "title_nochange": "你的計畫沒有任何改變",
+    "title_superseded": "這則建議已被取代",
+    "changes_title": "改變了什麼",
+    "version": "已儲存為計畫第 {version} 版。",
+    "rest_chosen": "你選擇了休息。你的下一個學習日是 {date}。",
+    "rest_link": "調整或結束休息",
+    "rejected": "你決定維持目前的計畫。沒有任何內容被更改，這樣完全沒問題。",
+    "partial_note": "你選了其中幾項建議，其餘的沒有套用。",
+    "left_out_title": "略過、未套用的項目",
+    "superseded": "這則建議在你決定之前就被取代了，所以沒有套用任何內容。",
+    "again": "告訴我們你現在的狀況",
+    "plan_link": "查看我的學習計畫",
+    "back": "回到今日任務"
+  },
+  "feedback": {
+    "title": "你覺得如何？（選填）",
+    "lead": "這是在問我們的建議好不好，不是在評價你。你的回答能幫助我們讓學習更輕鬆。",
+    "q": {
+      "clarity": {
+        "label": "建議說明得清楚嗎？",
+        "low": "不清楚",
+        "high": "非常清楚"
+      },
+      "helpfulness": {
+        "label": "這則建議有幫助嗎？",
+        "low": "沒有幫助",
+        "high": "非常有幫助"
+      },
+      "pressure": {
+        "label": "你有感到壓力嗎？",
+        "low": "完全沒有",
+        "high": "非常有"
+      }
+    },
+    "comment_label": "還有其他想說的嗎？（選填）",
+    "comment_hint": "最多 500 字。",
+    "submit": "送出意見",
+    "thanks": "謝謝你，你的意見已經儲存。"
+  },
+  "rest": {
+    "title": "好好休息",
+    "lead": "休息也是學習的一部分。請選擇你需要的時間。你不需要解釋原因，隨時都可以回來。",
+    "status_days": "你正在休息中。你的下一個學習日是 {date}。",
+    "status_open": "你正在休息，直到你回來為止。",
+    "resume_btn": "我回來了：立即恢復學習",
+    "resume_hint": "你的計畫和你離開時一模一樣。",
+    "legend": "你想休息多久？",
+    "one_day": "1 天",
+    "three_days": "3 天",
+    "seven_days": "7 天",
+    "until_back": "等我回來為止",
+    "until_back_desc": "沒有結束日期。準備好時按「我回來了」。",
+    "submit": "開始休息",
+    "submit_change": "調整休息時間",
+    "note": "休息不會改變你的學習計畫。"
+  },
+  "plan": {
+    "title": "你的學習計畫",
+    "own": "這是你的計畫。你可以隨時調高或調低任何數字。我們的建議永遠只是選項。",
+    "current_title": "目前的設定",
+    "version": "第 {version} 版",
+    "minutes": "{value} 分鐘",
+    "review_title": "你正在再複習的主題",
+    "review_until": "到 {date} 為止",
+    "review_none": "目前沒有主題。",
+    "pending": "你有一則建議正在等你決定。",
+    "pending_link": "查看建議",
+    "edit_title": "調整我的計畫",
+    "daily_minutes": "每日學習時間（分鐘）",
+    "daily_minutes_hint": "10 到 90",
+    "new_grammar": "每天的新句型數",
+    "new_grammar_hint": "1 到 10",
+    "exercise_count": "每天的練習題數",
+    "exercise_count_hint": "3 到 20",
+    "save": "儲存我的計畫",
+    "save_hint": "儲存後，目前未決定的建議會被關閉，因為它的數字已經不符。",
+    "history_title": "改變了什麼，為什麼",
+    "history_empty": "目前還沒有任何改變。"
+  },
+  "history": {
+    "who_learner": "你自己調整的",
+    "who_proposal": "你接受的一則建議",
+    "who_partial": "你接受了一部分的建議",
+    "who_default": "你的起始計畫",
+    "who_reject": "你維持了原本的計畫",
+    "default_text": "起始計畫：每天 {minutes} 分鐘、{grammar} 個新句型、{exercises} 題練習。",
+    "details": "詳細內容",
+    "nothing": "沒有任何內容被更改。"
+  },
+  "err": {
+    "generic": "這次沒有成功，請再試一次。",
+    "invalid_form": "請把每個數字都填好。",
+    "invalid_reason": "請從四個原因中選一個。",
+    "invalid_available_minutes": "分鐘數必須是 5 到 240 之間的整數。",
+    "note_too_long": "你的備註太長了，上限是 500 字。",
+    "too_many_reports": "你今天已經送出很多次了，我們先到這裡。請明天再試，或自己調整計畫。",
+    "no_plan": "找不到你的學習計畫，請先完成初始設定。",
+    "recommendation_not_found": "找不到這則建議。",
+    "already_processed": "這則建議已經處理過了。",
+    "invalid_decision": "無法辨識這個選擇，請使用頁面上的按鈕。",
+    "choose_items": "請先勾選至少一項建議，或選擇「維持目前的計畫」。",
+    "duplicate_item": "你的選擇似乎有問題，請重新勾選。",
+    "item_not_in_recommendation": "你的選擇似乎有問題，請重新勾選。",
+    "invalid_item": "這則建議已無法安全套用，所以沒有任何內容被更改。請重新取得建議。",
+    "stale_plan": "這則建議產生後你的計畫已經改變，所以沒有套用任何內容。請重新整理頁面，需要的話再取得新的建議。",
+    "decide_first": "請先決定要如何處理這則建議。",
+    "invalid_rating": "請為每個問題選擇 1 到 5 的分數。",
+    "comment_too_long": "你的意見太長了，上限是 500 字。",
+    "already_rated": "你已經送出過這則建議的意見了，謝謝你！",
+    "invalid_rest_days": "請選擇你想休息多久。",
+    "no_change": "這些數字和你目前的計畫相同，所以沒有儲存任何內容。",
+    "invalid_daily_minutes": "每日學習時間必須在 10 到 90 分鐘之間。",
+    "invalid_new_grammar": "每天的新句型數量不能多於每天的練習題數量。",
+    "invalid_exercise_count": "每天的練習題必須在 3 到 20 題之間。"
+  },
+  "flash": {
+    "rest_started": "已開始休息。你的下一個學習日是 {date}。請好好照顧自己。",
+    "rest_started_open": "已開始休息。準備好時再回來。",
+    "welcome_back": "歡迎回來！你的計畫和你離開時一模一樣。",
+    "thanks": "謝謝你的意見。",
+    "plan_saved": "已儲存你的計畫（第 {version} 版）。"
+  }
+}

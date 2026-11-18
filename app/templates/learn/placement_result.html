@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.placement.result_title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+{% set lv = level if level in ('A1', 'A2') else 'A1' %}
+<section class="card accent stack">
+  <h1>{{ t('learn.placement.result_title') }}</h1>
+  {% if score.total == 0 %}
+    <p>{{ t('learn.placement.skipped') }}</p>
+  {% else %}
+    <p class="stat"><b>{{ score.correct }} / {{ score.total }}</b>{{ t('learn.placement.score', correct=score.correct, total=score.total) }}</p>
+    {% if few %}<p class="muted small">{{ t('learn.placement.few', n=score.total) }}</p>{% endif %}
+  {% endif %}
+  <h2>{{ t('learn.placement.level_title') }} <span class="badge">{{ lv }}</span></h2>
+  <p>{{ t('learn.placement.level_' ~ lv) }}</p>
+  <p class="notice">{{ t('learn.placement.caution') }}</p>
+  <a class="btn btn-primary btn-block" href="/today">{{ t('learn.placement.cta') }}</a>
+</section>
+{% endblock %}

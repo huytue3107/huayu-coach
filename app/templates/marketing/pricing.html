@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "marketing/_macros.html" import items, seo with context %}
+{% block title %}{{ t('marketing.meta.pricing_title') }} · {{ app.name }}{% endblock %}
+{% block head %}{{ seo('marketing.meta.pricing_title', 'marketing.meta.pricing_desc') }}{% endblock %}
+{% block content %}
+<div class="marketing stack">
+
+  <header>
+    <h1>{{ t('marketing.pricing.title') }}</h1>
+    <p class="muted">{{ t('marketing.pricing.intro') }}</p>
+  </header>
+
+  {% if billing_enabled %}
+  <section class="card accent stack" aria-labelledby="trial">
+    <h2 id="trial">{{ t('marketing.pricing.trial_title', days=trial_days) }}</h2>
+    <p>{{ t('marketing.pricing.trial_body', days=trial_days) }}</p>
+  </section>
+  {% else %}
+  <section class="card accent stack pilot" aria-labelledby="pilot">
+    <h2 id="pilot">{{ t('marketing.pricing.pilot_title') }}</h2>
+    <p>{{ t('marketing.pricing.pilot_body') }}</p>
+  </section>
+  {% endif %}
+
+  <section class="stack" aria-labelledby="plans">
+    <h2 id="plans">{% if billing_enabled %}{{ t('marketing.pricing.plans_heading') }}{% else %}{{ t('marketing.pricing.planned_heading') }}{% endif %}</h2>
+    {% if not billing_enabled and plans %}<p class="muted small">{{ t('marketing.pricing.planned_note') }}</p>{% endif %}
+    {% if plans %}
+    <div class="grid two plans">
+      {% for p in plans %}
+      <article class="card plan" data-plan="{{ p.code }}">
+        <h3>{{ p.name }}</h3>
+        <p class="price">{{ t('marketing.pricing.price', price=p.price) }}</p>
+        <p class="muted">{{ t('marketing.pricing.period', days=p.days) }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="muted">{{ t('marketing.pricing.no_plans') }}</p>
+    {% endif %}
+  </section>
+
+  <section class="card stack" aria-labelledby="includes">
+    <h2 id="includes">{{ t('marketing.pricing.includes_title') }}</h2>
+    {{ items('marketing.pricing.include_', 6, 'bullets ticks') }}
+  </section>
+
+  <section class="stack" aria-labelledby="faq">
+    <h2 id="faq">{{ t('marketing.pricing.faq_title') }}</h2>
+    <div class="card stack">
+      <h3>{{ t('marketing.pricing.how_pay_title') }}</h3>
+      <p>{{ t('marketing.pricing.how_pay_body') }}</p>
+    </div>
+    <div class="card stack">
+      <h3>{{ t('marketing.pricing.no_renew_title') }}</h3>
+      <p>{{ t('marketing.pricing.no_renew_body') }}</p>
+    </div>
+    <div class="card stack">
+      <h3>{{ t('marketing.pricing.stop_title') }}</h3>
+      <p>{{ t('marketing.pricing.stop_body') }}</p>
+    </div>
+  </section>
+
+  <p class="center"><a class="btn btn-primary" href="/register">{{ t('marketing.pricing.cta') }}</a></p>
+
+</div>
+{% endblock %}

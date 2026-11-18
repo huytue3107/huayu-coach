@@ -1,0 +1,14 @@
+{% macro rating(name) %}
+<fieldset class="plain rating rating-{{ name }}" aria-describedby="ends-{{ name }}">
+  <legend>{{ t('coach.feedback.q.' ~ name ~ '.label') }}</legend>
+  <div class="rating-scale">
+    {% for n in range(1, 6) %}
+    <label class="rate"><input type="radio" name="{{ name }}" value="{{ n }}" required><span>{{ n }}</span></label>
+    {% endfor %}
+  </div>
+  <div class="rating-ends small muted" id="ends-{{ name }}">
+    <span>{{ t('coach.feedback.q.' ~ name ~ '.low') }}</span>
+    <span>{{ t('coach.feedback.q.' ~ name ~ '.high') }}</span>
+  </div>
+</fieldset>
+{% endmacro %}

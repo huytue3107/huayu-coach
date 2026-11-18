@@ -1,0 +1,10 @@
+{% from "learn/_macros.html" import fdate with context %}
+<section class="card soft stack" aria-labelledby="rest-title">
+  {% set rest_h = rest_heading | default('h2') %}
+  <{{ rest_h }} id="rest-title">{{ t('learn.today.rest_title') }}</{{ rest_h }}>
+  <p>{% if rest_open or not rest_until %}{{ t('learn.today.rest_open') }}{% else %}{{ t('learn.today.rest_until', date=fdate(rest_until)) }}{% endif %}</p>
+  <form method="post" action="/resume">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <button class="btn btn-primary btn-block" type="submit">{{ t('learn.today.rest_resume') }}</button>
+  </form>
+</section>

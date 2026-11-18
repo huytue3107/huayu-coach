@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% from "marketing/_macros.html" import items, seo, langs with context %}
+{% block title %}{{ t('marketing.meta.home_title') }} · {{ app.name }}{% endblock %}
+{% block head %}{{ seo('marketing.meta.home_title', 'marketing.meta.home_desc') }}{% endblock %}
+{% block content %}
+<div class="marketing stack">
+
+  <section class="hero stack">
+    <p class="eyebrow">{{ t('marketing.home.eyebrow') }}</p>
+    <h1>{{ t('marketing.home.hero_title') }}</h1>
+    <p class="lead">{{ t('marketing.home.hero_sub') }}</p>
+    <p class="hero-zh"><span class="zh" lang="zh-TW">{{ t('marketing.home.hero_zh') }}</span>{% if locale != 'zh-TW' %} <span class="muted small">{{ t('marketing.home.hero_zh_gloss') }}</span>{% endif %}</p>
+    <div class="row cta-row">
+      <a class="btn btn-primary" href="/register">{{ t('marketing.home.cta_register') }}</a>
+      <a class="btn btn-secondary" href="/pricing">{{ t('marketing.home.cta_pricing') }}</a>
+    </div>
+    <p class="muted small">
+      {% if billing_enabled %}{{ t('marketing.home.note_trial', days=trial_days) }}{% else %}{{ t('marketing.home.note_pilot') }}{% endif %}
+      <a href="/login">{{ t('marketing.home.cta_login') }}</a>
+    </p>
+  </section>
+
+  <section class="card stack" aria-labelledby="problem">
+    <h2 id="problem">{{ t('marketing.home.problem_title') }}</h2>
+    <p>{{ t('marketing.home.problem_p1') }}</p>
+    <p>{{ t('marketing.home.problem_p2') }}</p>
+  </section>
+
+  <section class="stack" aria-labelledby="how">
+    <div>
+      <h2 id="how">{{ t('marketing.home.how_title') }}</h2>
+      <p class="muted">{{ t('marketing.home.how_intro') }}</p>
+    </div>
+    <ol class="steps">
+      {% for n in range(1, 5) %}
+      <li class="card">
+        <div>
+          <h3>{{ t('marketing.home.step' ~ n ~ '_title') }}</h3>
+          <p>{{ t('marketing.home.step' ~ n ~ '_body') }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ol>
+    <p class="notice">{{ t('marketing.home.how_ok') }}</p>
+  </section>
+
+  <section class="stack" aria-labelledby="reasons">
+    <div>
+      <h2 id="reasons">{{ t('marketing.home.reasons_title') }}</h2>
+      <p class="muted">{{ t('marketing.home.reasons_intro') }}</p>
+    </div>
+    <div class="grid two">
+      {% for code in ['too_hard', 'no_time', 'need_rest', 'distracted'] %}
+      <article class="card accent reason">
+        <h3>{{ t('marketing.home.reason_' ~ code ~ '_title') }}</h3>
+        <p class="muted">{{ t('marketing.home.reason_' ~ code ~ '_body') }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="muted">{{ t('marketing.home.reasons_foot') }}</p>
+  </section>
+
+  <section class="card soft stack sample" aria-labelledby="example">
+    <h2 id="example">{{ t('marketing.home.example_title') }}</h2>
+    <p>{{ t('marketing.home.example_intro') }}</p>
+    <p class="sample-now">{{ t('marketing.home.example_now') }}</p>
+    <ul class="sample-items">
+      <li>{{ t('marketing.home.example_s1') }}</li>
+      <li>{{ t('marketing.home.example_s2') }}</li>
+    </ul>
+    <p class="notice">{{ t('marketing.home.example_choice') }}</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="honest">
+    <h2 id="honest">{{ t('marketing.home.honest_title') }}</h2>
+    <p>{{ t('marketing.home.honest_p1') }}</p>
+    <p>{{ t('marketing.home.honest_p2') }}</p>
+    <p>{{ t('marketing.home.honest_p3') }}</p>
+    <p>{% if unreviewed_served %}{{ t('marketing.home.honest_content_pending') }}{% else %}{{ t('marketing.home.honest_content_approved') }}{% endif %}</p>
+    <p class="muted">{{ t('marketing.home.honest_no_promise') }}</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="who">
+    <h2 id="who">{{ t('marketing.home.who_title') }}</h2>
+    <p>{{ langs(t('marketing.home.who_p1'), [('Tiếng Việt', 'vi'), ('繁體中文', 'zh-TW'), ('English', 'en')]) }}</p>
+    <p>{{ t('marketing.home.who_p2') }}</p>
+  </section>
+
+  <section class="card stack" aria-labelledby="calm">
+    <h2 id="calm">{{ t('marketing.home.calm_title') }}</h2>
+    {{ items('marketing.home.calm_', 4, 'bullets ticks') }}
+  </section>
+
+  <section class="card accent center stack" aria-labelledby="final">
+    <h2 id="final">{{ t('marketing.home.final_title') }}</h2>
+    <p>{{ t('marketing.home.final_body') }}</p>
+    <p><a class="btn btn-primary" href="/register">{{ t('marketing.home.cta_register') }}</a></p>
+  </section>
+
+</div>
+{% endblock %}

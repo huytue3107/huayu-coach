@@ -1,0 +1,259 @@
+{
+  "reason": {
+    "too_hard": {
+      "title": "It feels too hard",
+      "desc": "The lessons or exercises are more than I can handle right now."
+    },
+    "no_time": {
+      "title": "I don't have time",
+      "desc": "Life is busy and I can't fit in my usual study time."
+    },
+    "need_rest": {
+      "title": "I need a rest",
+      "desc": "I'm tired or overloaded and I want a break."
+    },
+    "distracted": {
+      "title": "I get distracted",
+      "desc": "I can start, but it is hard to stay focused."
+    }
+  },
+  "stuck": {
+    "title": "What is making it hard?",
+    "lead": "Stopping is okay. It happens to every learner. We only want to understand, not to push you.",
+    "promise": "Nothing in your plan changes until you say so.",
+    "legend": "What is the main reason?",
+    "minutes_label": "About how many minutes do you have today? (optional)",
+    "minutes_hint": "Between 5 and 240. We use it to suggest a daily study time that fits.",
+    "note_label": "Anything you would like to add? (optional)",
+    "note_hint": "A private note, up to 500 characters. It is not used to work out suggestions and is never sent to an AI service.",
+    "submit": "Show me my options",
+    "open_proposal": "You already have a suggestion waiting for your decision.",
+    "open_proposal_link": "Review it",
+    "rest_link": "Just want to rest? Take a break now"
+  },
+  "summary": {
+    "too_hard": "You said things feel too hard right now. That is normal when learning Mandarin and says nothing bad about you. Below are a few gentle ways to lighten the load, based on your plan and your recent answers. Take what helps and leave the rest.",
+    "no_time": "You said you do not have enough time right now. That is fair: a plan only helps if it fits your life. Below are a few ways to make it smaller. Take what helps and leave the rest.",
+    "need_rest": "You said you need a rest. That is a good reason to stop and you do not have to explain it. Below is a short break you can accept, or you can keep your plan exactly as it is.",
+    "distracted": "You said it is hard to stay focused. That happens to everyone. Below are small changes that make a session easier to finish. Take what helps and leave the rest.",
+    "default": "Below are a few gentle suggestions based on your plan. Take what helps and leave the rest."
+  },
+  "item_title": {
+    "reduce_new_grammar": "Fewer new grammar points",
+    "change_exercise_count": "Fewer exercises",
+    "change_daily_minutes": "Shorter daily study time",
+    "split_session": "Split your study into shorter sessions",
+    "pomodoro": "Short focus blocks",
+    "take_rest": "Take a short rest",
+    "review_topic": "Go over a tricky topic again",
+    "unknown": "A suggestion"
+  },
+  "item": {
+    "reduce_new_grammar": "New grammar points per day: {old} → {new}.",
+    "reduce_new_grammar_plain": "New grammar points per day: {new}.",
+    "change_exercise_count": "Exercises per day: {old} → {new}.",
+    "change_exercise_count_plain": "Exercises per day: {new}.",
+    "change_daily_minutes": "Daily study time: {old} → {new} minutes.",
+    "change_daily_minutes_plain": "Daily study time: {new} minutes.",
+    "split_session": "Split your daily study into {sessions} shorter sessions (now: {old}).",
+    "split_session_plain": "Split your daily study into {sessions} shorter sessions.",
+    "pomodoro": "Study in focused blocks of {minutes} minutes, with a short break between blocks.",
+    "take_rest": "Rest for {days} days. No study is expected, and you can come back earlier whenever you like.",
+    "take_rest_one": "Rest for 1 day. No study is expected, and you can come back earlier whenever you like.",
+    "review_topic": "Practise “{topic}” a little more over the next week.",
+    "unknown": "A suggestion that this version of the app cannot describe."
+  },
+  "evidence": {
+    "self_report": "You told us: “{reason}”.",
+    "plan_value": "Your plan right now, {field}: {value}.",
+    "accuracy": "In the last {days} days you answered {correct} of {total} {skill} questions correctly.",
+    "few_data_zero": "We have no {skill} answers from you yet, so we cannot say how it is going and we will not guess.",
+    "few_data_one": "We have only 1 {skill} answer from you so far. That is too few to say how it is going, so we show no percentage.",
+    "few_data": "We have only {total} {skill} answers from you so far. That is too few to say how it is going, so we show no percentage.",
+    "weak_topic": "In the last {days} days you missed {wrong} questions on “{topic}”.",
+    "completion": "In the last {days} days you finished {done} of {scheduled} daily tasks.",
+    "available_minutes": "You said you have about {value} minutes today.",
+    "plan_at_minimum": "Your plan is already at its lightest, so a rest is the only gentler option left."
+  },
+  "skill": {
+    "grammar": "grammar",
+    "vocab": "vocabulary",
+    "reading": "reading"
+  },
+  "label": {
+    "daily_minutes": "daily study time (minutes)",
+    "new_grammar": "new grammar points per day",
+    "exercise_count": "exercises per day",
+    "sessions_per_day": "sessions per day",
+    "focus_minutes": "focus block (minutes)"
+  },
+  "field": {
+    "daily_minutes": "Daily study time: {old} → {new} minutes",
+    "new_grammar": "New grammar points per day: {old} → {new}",
+    "exercise_count": "Exercises per day: {old} → {new}",
+    "sessions_per_day": "Sessions per day: {old} → {new}",
+    "focus_minutes": "Focus block length: {old} → {new} minutes",
+    "review_topics": "Topics to go over again: {old} → {new}",
+    "rest_until": "Rest: your next study day is {new}",
+    "unknown": "Something in your plan changed: {old} → {new}"
+  },
+  "value": {
+    "none": "not set",
+    "sep": ", "
+  },
+  "date": {
+    "fmt": "{y}-{m}-{d}"
+  },
+  "proposal": {
+    "title": "Here is what we found",
+    "notice": "Nothing has changed yet. Your plan only changes if you confirm.",
+    "you_said": "You told us:",
+    "ai_label": "Wording written by an AI",
+    "ai_note": "Written by an AI chosen by the operator. The suggestions below and every number come from fixed rules, and only the ones you tick are applied. If this wording and the list below ever differ, the list is what counts.",
+    "glance": "In short: {titles}.",
+    "items_title": "Suggestions",
+    "items_hint": "Tick the ones you want. Nothing is ticked for you.",
+    "evidence_title": "Why we suggest this",
+    "btn_selected": "Accept selected",
+    "btn_all": "Accept all",
+    "btn_reject": "Keep my current plan",
+    "manual": "Prefer to set the numbers yourself? Edit your plan",
+    "outcome_accepted": "You accepted all of this suggestion.",
+    "outcome_partial": "You accepted part of this suggestion.",
+    "outcome_rejected": "You chose to keep your plan as it was.",
+    "outcome_superseded": "A newer suggestion, or a change you made to your plan, replaced this one.",
+    "see_result": "See what happened",
+    "ask_again": "Tell us how it is going now",
+    "stale_title": "Your plan has changed since this suggestion was made",
+    "stale_body": "The numbers here were worked out from an older version of your plan, so we cannot apply them. Nothing was changed. A fresh suggestion only takes a moment.",
+    "open_other": "You have a newer suggestion waiting.",
+    "open_other_link": "Review it",
+    "status_none": "This suggestion has no items."
+  },
+  "done": {
+    "title_changed": "Your plan is updated",
+    "title_rest": "Enjoy your rest",
+    "title_rejected": "Your plan stays as it was",
+    "title_nochange": "Nothing in your plan changed",
+    "title_superseded": "This suggestion was replaced",
+    "changes_title": "What changed",
+    "version": "Saved as plan version {version}.",
+    "rest_chosen": "You chose to rest. Your next study day is {date}.",
+    "rest_link": "Change or end your rest",
+    "rejected": "You decided to keep your current plan. Nothing was changed, and that is perfectly fine.",
+    "partial_note": "You chose some of the suggestions. The rest were left out.",
+    "left_out_title": "Left out, not applied",
+    "superseded": "This suggestion was replaced before you decided, so nothing was applied.",
+    "again": "Tell us how it is going now",
+    "plan_link": "See my plan",
+    "back": "Back to today"
+  },
+  "feedback": {
+    "title": "How was this? (optional)",
+    "lead": "This is about our suggestion, not about you. Your answers help us keep it light.",
+    "q": {
+      "clarity": {
+        "label": "Was it clear?",
+        "low": "Not clear",
+        "high": "Very clear"
+      },
+      "helpfulness": {
+        "label": "Was it helpful?",
+        "low": "Not helpful",
+        "high": "Very helpful"
+      },
+      "pressure": {
+        "label": "Did it feel like pressure?",
+        "low": "Not at all",
+        "high": "A lot"
+      }
+    },
+    "comment_label": "Anything else? (optional)",
+    "comment_hint": "Up to 500 characters.",
+    "submit": "Send feedback",
+    "thanks": "Thank you. Your feedback is already saved."
+  },
+  "rest": {
+    "title": "Take a rest",
+    "lead": "Rest is part of learning. Choose how long you need. You do not have to explain, and you can come back whenever you like.",
+    "status_days": "You are resting. Your next study day is {date}.",
+    "status_open": "You are resting until you come back.",
+    "resume_btn": "I'm back: resume now",
+    "resume_hint": "Your plan is exactly as you left it.",
+    "legend": "How long would you like to rest?",
+    "one_day": "1 day",
+    "three_days": "3 days",
+    "seven_days": "7 days",
+    "until_back": "Until I come back",
+    "until_back_desc": "No end date. Press “I'm back” when you are ready.",
+    "submit": "Start resting",
+    "submit_change": "Change my rest",
+    "note": "Resting does not change your plan."
+  },
+  "plan": {
+    "title": "Your study plan",
+    "own": "This is your plan. You can raise or lower any number whenever you like. Suggestions from us are always optional.",
+    "current_title": "Right now",
+    "version": "Version {version}",
+    "minutes": "{value} minutes",
+    "review_title": "Topics you are going over again",
+    "review_until": "until {date}",
+    "review_none": "No topics at the moment.",
+    "pending": "You have a suggestion waiting for your decision.",
+    "pending_link": "Review it",
+    "edit_title": "Change my plan",
+    "daily_minutes": "Daily study time (minutes)",
+    "daily_minutes_hint": "10 to 90",
+    "new_grammar": "New grammar points per day",
+    "new_grammar_hint": "1 to 10",
+    "exercise_count": "Exercises per day",
+    "exercise_count_hint": "3 to 20",
+    "save": "Save my plan",
+    "save_hint": "Saving closes any open suggestion, because its numbers would no longer match.",
+    "history_title": "What changed, and why",
+    "history_empty": "No changes yet."
+  },
+  "history": {
+    "who_learner": "You changed it",
+    "who_proposal": "A suggestion you accepted",
+    "who_partial": "A suggestion you partly accepted",
+    "who_default": "Your starting plan",
+    "who_reject": "You kept your plan as it was",
+    "default_text": "Starting plan: {minutes} minutes a day, {grammar} new grammar points, {exercises} exercises.",
+    "details": "Details",
+    "nothing": "Nothing was changed."
+  },
+  "err": {
+    "generic": "That did not work. Please try again.",
+    "invalid_form": "Please fill in every number.",
+    "invalid_reason": "Please choose one of the four reasons.",
+    "invalid_available_minutes": "Minutes must be a whole number between 5 and 240.",
+    "note_too_long": "Your note is too long. The limit is 500 characters.",
+    "too_many_reports": "You have sent many requests today. Let's pause here. Try again tomorrow, or edit your plan yourself.",
+    "no_plan": "We could not find your study plan. Please finish setting up first.",
+    "recommendation_not_found": "We could not find that suggestion.",
+    "already_processed": "This suggestion was already handled.",
+    "invalid_decision": "That choice was not recognised. Please use the buttons on the page.",
+    "choose_items": "Tick at least one suggestion first, or choose “Keep my current plan”.",
+    "duplicate_item": "Something in your selection did not look right. Please tick again.",
+    "item_not_in_recommendation": "Something in your selection did not look right. Please tick again.",
+    "invalid_item": "This suggestion can no longer be applied safely, so nothing was changed. Ask for a fresh one.",
+    "stale_plan": "Your plan changed after this suggestion was made, so nothing was applied. Please reload and, if needed, ask for a fresh suggestion.",
+    "decide_first": "Please decide on the suggestion first.",
+    "invalid_rating": "Please choose a rating from 1 to 5 for each question.",
+    "comment_too_long": "Your comment is too long. The limit is 500 characters.",
+    "already_rated": "You already sent feedback for this one. Thank you!",
+    "invalid_rest_days": "Please choose how long you want to rest.",
+    "no_change": "Those numbers are the same as your current plan, so nothing was saved.",
+    "invalid_daily_minutes": "Daily study time must be between 10 and 90 minutes.",
+    "invalid_new_grammar": "New grammar points per day cannot be more than exercises per day.",
+    "invalid_exercise_count": "Exercises must be between 3 and 20."
+  },
+  "flash": {
+    "rest_started": "Rest started. Your next study day is {date}. Take care of yourself.",
+    "rest_started_open": "Rest started. Come back whenever you are ready.",
+    "welcome_back": "Welcome back! Your plan is just as you left it.",
+    "thanks": "Thank you for your feedback.",
+    "plan_saved": "Your plan is saved (version {version})."
+  }
+}

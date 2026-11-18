@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.' ~ kind ~ '.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<section class="card accent stack">
+  {% if empty %}
+    <h1>{{ t('learn.placement.empty_title') }}</h1>
+    <p>{{ t('learn.placement.empty_body') }}</p>
+  {% else %}
+    <h1>{{ t('learn.' ~ kind ~ '.ready_title') }}</h1>
+    <p>{{ t('learn.' ~ kind ~ '.ready_body') }}</p>
+  {% endif %}
+  <form method="post" action="{{ action }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <button class="btn btn-primary btn-block" type="submit">{% if empty %}{{ t('learn.placement.empty_cta') }}{% else %}{{ t('learn.' ~ kind ~ '.ready_cta') }}{% endif %}</button>
+  </form>
+</section>
+{% endblock %}

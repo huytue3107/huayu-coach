@@ -1,0 +1,25 @@
+# Caddy snippet for the NO-Docker install (deploy/huayu-coach.service). Caddy is installed from apt on the host:
+# https://caddyserver.com/docs/install#debian-ubuntu-raspbian
+# Put this in /etc/caddy/Caddyfile, replace the domain, then:  sudo systemctl reload caddy
+# NOT RUN YET. Check it with:  caddy validate --config /etc/caddy/Caddyfile
+# The Caddy package in Ubuntu's own repository can be old; if validate rejects `timeouts` or `request_body`, install Caddy from
+# the repository on the page linked above.
+# Same settings as deploy/Caddyfile; the comments there explain them (timeouts, 3 MB body cap, X-Forwarded-For, no access log).
+{
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 30s
+			idle 2m
+		}
+	}
+}
+
+huayu.example.com {
+	encode zstd gzip
+	header Cross-Origin-Opener-Policy same-origin
+	request_body {
+		max_size 3MB
+	}
+	reverse_proxy 127.0.0.1:8000
+}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.billing.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <h1>{{ t('admin.billing.title') }}</h1>
+  {% if not billing_enabled %}<div class="notice" role="note">{{ t('admin.billing.off_note') }}</div>{% endif %}
+
+  <section class="card stack">
+    <h2>{{ t('admin.billing.plans') }}</h2>
+    {% for p in plans %}
+    <form method="post" action="/admin/billing/plans/{{ p.code }}" class="plan-form stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <div class="row"><h3 class="grow"><span class="mono">{{ p.code }}</span></h3>
+        <span class="badge {{ 'ok' if p.active else 'bad' }}">{{ t('admin.billing.active_yes') if p.active else t('admin.billing.active_no') }}</span></div>
+      <div class="grid two">
+        <div class="field"><label for="n-vi-{{ p.code }}">{{ t('admin.billing.name_vi') }}</label><input type="text" id="n-vi-{{ p.code }}" name="name_vi" value="{{ p.name.get('vi', '') }}" maxlength="60" required></div>
+        <div class="field"><label for="n-zh-{{ p.code }}">{{ t('admin.billing.name_zh') }}</label><input type="text" id="n-zh-{{ p.code }}" name="name_zh" value="{{ p.name.get('zh-TW', '') }}" maxlength="60" required></div>
+        <div class="field"><label for="n-en-{{ p.code }}">{{ t('admin.billing.name_en') }}</label><input type="text" id="n-en-{{ p.code }}" name="name_en" value="{{ p.name.get('en', '') }}" maxlength="60" required></div>
+        <div class="field"><label for="price-{{ p.code }}">{{ t('admin.billing.price') }}</label><input type="number" id="price-{{ p.code }}" name="price_twd" value="{{ p.price_twd }}" min="0" max="1000000" required></div>
+        <div class="field"><label for="days-{{ p.code }}">{{ t('admin.billing.days') }}</label><input type="number" id="days-{{ p.code }}" name="period_days" value="{{ p.period_days }}" min="1" max="3650" required></div>
+      </div>
+      <label class="choice"><input type="checkbox" name="active" value="1"{% if p.active %} checked{% endif %}> {{ t('admin.billing.active_label') }}</label>
+      <div><button class="btn btn-primary" type="submit">{{ t('common.btn.save') }}</button></div>
+    </form>
+    {% else %}<p class="muted">{{ t('admin.billing.no_plans') }}</p>{% endfor %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.billing.new_plan') }}</h2>
+    <form method="post" action="/admin/billing/plans" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <div class="grid two">
+        <div class="field"><label for="new-code">{{ t('admin.billing.code') }}</label><input type="text" id="new-code" name="code" maxlength="20" pattern="[a-z][a-z0-9_]{1,19}" required>
+          <p class="hint">{{ t('admin.billing.code_hint') }}</p></div>
+        <div class="field"><label for="new-vi">{{ t('admin.billing.name_vi') }}</label><input type="text" id="new-vi" name="name_vi" maxlength="60" required></div>
+        <div class="field"><label for="new-zh">{{ t('admin.billing.name_zh') }}</label><input type="text" id="new-zh" name="name_zh" maxlength="60" required></div>
+        <div class="field"><label for="new-en">{{ t('admin.billing.name_en') }}</label><input type="text" id="new-en" name="name_en" maxlength="60" required></div>
+        <div class="field"><label for="new-price">{{ t('admin.billing.price') }}</label><input type="number" id="new-price" name="price_twd" min="0" max="1000000" required></div>
+        <div class="field"><label for="new-days">{{ t('admin.billing.days') }}</label><input type="number" id="new-days" name="period_days" min="1" max="3650" required></div>
+      </div>
+      <div><button class="btn btn-primary" type="submit">{{ t('admin.billing.create') }}</button></div>
+    </form>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.billing.months') }}</h2>
+    {% if months %}<div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.billing.month') }}</th><th class="num">{{ t('admin.billing.total') }}</th><th class="num">{{ t('admin.billing.count') }}</th></tr></thead>
+      <tbody>{% for month, total, count in months %}<tr><td>{{ month }}</td><td class="num">{{ twd(total) }}</td><td class="num">{{ count }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{{ t('admin.stats.no_data') }}</p>{% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.billing.recent') }}</h2>
+    {% if payments %}<div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.billing.when') }}</th><th>{{ t('admin.users.col.code') }}</th><th class="num">{{ t('admin.billing.amount') }}</th><th>{{ t('admin.billing.provider') }}</th><th>{{ t('admin.billing.note') }}</th></tr></thead>
+      <tbody>{% for p, code in payments %}<tr><td class="nowrap">{{ fmt_dt(p.created_at) }}</td>
+        <td>{% if p.user_id %}<a href="/admin/users/{{ p.user_id }}">{{ code }}</a>{% else %}—{% endif %}</td>
+        <td class="num nowrap">{{ twd(p.amount_twd) }}</td><td>{{ p.provider }}</td><td>{{ p.note or '—' }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% else %}<p class="muted">{{ t('admin.stats.no_data') }}</p>{% endif %}
+  </section>
+</div>
+{% endblock %}

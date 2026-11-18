@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.today.rest_title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  {% set rest_heading = 'h1' %}{# this page has no other heading #}
+  {% include "learn/_rest.html" %}
+  <p class="center small"><a href="/today">{{ t('learn.common.back_today') }}</a></p>
+</div>
+{% endblock %}

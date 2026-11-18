@@ -1,0 +1,72 @@
+# Huayu Coach on a single VPS: the app (not published) behind Caddy, which gets the HTTPS certificate by itself.
+# Needs a `.env` next to this file (copy .env.example, see deploy/deploy.md). NOT RUN YET: Docker is not installed on the development Mac.
+#
+#   docker volume create huayu-data     ONCE, before the first start (the data volume is created by hand on purpose, see below)
+#   docker compose up -d --build        start / update (before an update: backup + `docker tag`, see deploy/deploy.md section 11)
+#   docker compose logs -f app          follow the logs
+#
+# NEVER run `docker compose down -v`, `docker volume rm huayu-data` or `docker system prune --volumes` on the live server.
+# They are how learner data gets lost by accident. deploy/deploy.md section 10 says how to protect and back up the data.
+
+# A fixed project name: without it Compose uses the NAME OF THE DIRECTORY, so renaming ~/huayu-coach would give new, empty volumes.
+name: huayu-coach
+
+services:
+  app:
+    build: .
+    image: huayu-coach:latest
+    env_file: .env
+    # `environment` wins over `env_file`: production settings that .env must not be able to change.
+    environment:
+      HUAYU_ENV: prod
+      HUAYU_DATA_DIR: /data
+      HUAYU_TRUSTED_PROXY: "true"
+      HUAYU_BASE_URL: "https://${DOMAIN:?Set DOMAIN=your.domain.example in .env}"
+    volumes:
+      - huayu-data:/data
+    restart: unless-stopped
+    # Memory ceiling, sized for a 1-2 GB VPS: 2 uvicorn workers (about 100 MB each) plus the argon2 password hashing, which the
+    # app bounds itself (app/security.py). The limit is a backstop so the app cannot starve the host or Caddy; it is not a fix
+    # for too small a server. Raise it on a bigger VPS. See "VPS size" in deploy/deploy.md.
+    mem_limit: 768m
+    # Log rotation. Docker keeps container logs forever by default. Here: at most 5 files x 10 MB = 50 MB for this service.
+    # The limit is by SIZE, not by time, and the logs vanish when the container is recreated (`docker compose up -d --build`).
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    # No `ports:` on purpose: only Caddy can reach the app, over the internal compose network.
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    mem_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: "${DOMAIN:?Set DOMAIN=your.domain.example in .env}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  # The learner database. `external: true` = Compose never creates or deletes it, so `docker compose down -v` and a renamed
+  # project directory cannot remove it. Create it once by hand: docker volume create huayu-data
+  huayu-data:
+    external: true
+    name: huayu-data
+  # Caddy's certificates. Losing them only means Caddy asks Let's Encrypt again.
+  caddy-data:
+  caddy-config:

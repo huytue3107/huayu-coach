@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="{{ locale }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}{{ app.name }}{% endblock %}</title>
+  <meta name="theme-color" content="#14233C">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/manifest/icon-192.png">
+  <link rel="stylesheet" href="/static/css/app.css">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip" href="#main">{{ t('common.skip') }}</a>
+  <header class="topbar">
+    <a class="brand" href="{{ '/today' if user else '/' }}"><span class="brand-zh" lang="zh-TW">華語教練</span> <span class="brand-en" lang="en">Huayu Coach</span></a>
+    {% if user %}
+    <nav class="mainnav" aria-label="{{ t('common.nav.main') }}">
+      <a href="/today" {% if path.startswith('/today') or path.startswith('/task') or path.startswith('/placement') %}aria-current="page"{% endif %}>{{ t('common.nav.today') }}</a>
+      <a href="/stuck" {% if path.startswith('/stuck') or path.startswith('/proposal') %}aria-current="page"{% endif %}>{{ t('common.nav.stuck') }}</a>
+      <a href="/progress" {% if path.startswith('/progress') %}aria-current="page"{% endif %}>{{ t('common.nav.progress') }}</a>
+      <a href="/plan" {% if path.startswith('/plan') %}aria-current="page"{% endif %}>{{ t('common.nav.plan') }}</a>
+      {% if user.role in ('admin', 'teacher') %}<a href="/admin" {% if path.startswith('/admin') %}aria-current="page"{% endif %}>{{ t('common.nav.admin') }}</a>{% endif %}
+    </nav>
+    {% endif %}
+    <div class="tools">
+      <details class="lang">
+        <summary><span aria-hidden="true">🌐</span> <span class="sr-only">{{ t('common.nav.language') }}: </span>{{ locale }}</summary>
+        <ul>{% for code, name in languages %}<li><a href="/lang/{{ code }}?next={{ path }}" lang="{{ code }}"{% if code == locale %} aria-current="true"{% endif %}>{{ name }}</a></li>{% endfor %}</ul>
+      </details>
+      {% if user %}
+        <a class="btn btn-rest" href="/rest">{{ t('common.nav.rest') }}</a>
+        <a class="link" href="/settings">{{ t('common.nav.settings') }}</a>
+        <form method="post" action="/logout" class="inline"><input type="hidden" name="csrf" value="{{ csrf_token }}"><button class="link" type="submit">{{ t('common.nav.logout') }}</button></form>
+      {% else %}
+        <a class="link" href="/login">{{ t('common.nav.login') }}</a>
+        <a class="btn btn-primary btn-sm" href="/register">{{ t('common.nav.register') }}</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    {% if flash %}<div class="flash flash-{{ flash.level }}" role="status">{{ flash.text }}</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <a href="/privacy">{{ t('common.footer.privacy') }}</a>
+    <a href="/terms">{{ t('common.footer.terms') }}</a>
+    {% if app.support_email %}<a href="mailto:{{ app.support_email }}">{{ t('common.footer.support') }}</a>{% endif %}
+    <span class="muted">{{ t('common.tagline') }}</span>
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

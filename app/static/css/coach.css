@@ -1,0 +1,46 @@
+/* Coach screens (slice C). Reuses the tokens and components from app.css; only what is new lives here. */
+fieldset.plain { border: 0; margin: 0; padding: 0; min-width: 0; }
+fieldset.plain > legend { font-weight: 700; color: var(--navy); font-size: 1.1rem; padding: 0; margin-bottom: .5rem; }
+.reason-desc { display: block; font-weight: 400; margin-top: .15rem; }
+
+/* "how many minutes" only matters for "no time": reveal it when that card is picked (always visible without :has) */
+@supports selector(:has(*)) {
+  .stuck-minutes { display: none; }
+  .stuck-form:has(input[name="reason"][value="no_time"]:checked) .stuck-minutes { display: block; }
+}
+
+/* proposal items */
+.proposal-item { align-items: flex-start; font-weight: 400; margin-bottom: 0; }
+.item-label { display: block; margin: 0; font-weight: 400; cursor: pointer; }
+.proposal-item input[type=checkbox] { flex: none; width: 1.5rem; height: 1.5rem; margin-top: .15rem; accent-color: var(--teal); }
+.item-body { display: block; min-width: 0; }
+.item-title { display: block; color: var(--navy); font-size: 1.05rem; }
+.item-text { display: block; margin-top: .15rem; }
+.zh.topic-chip { display: inline-block; font-size: 1.25rem; line-height: 1.3; margin-left: .4rem; color: var(--teal-dark); }
+.item-why { display: block; margin-top: .6rem; font-weight: 600; }
+.decide-actions { display: grid; gap: .6rem; }
+
+/* done / plan */
+.change-list { margin: 0; padding-left: 1.2rem; }
+.change-list li + li { margin-top: .3rem; }
+.plan-numbers { display: grid; gap: .5rem; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 0; }
+.plan-numbers > div { background: var(--bg); border-radius: 10px; padding: .6rem .8rem; }
+.plan-numbers dt { color: var(--muted); font-size: .88rem; }
+.plan-numbers dd { margin: 0; font-size: 1.6rem; font-weight: 700; color: var(--teal-dark); line-height: 1.3; }
+.history { list-style: none; margin: 0; padding: 0; }
+.history > li { padding: .7rem 0; border-top: 1px solid var(--line); }
+.history > li:first-child { border-top: 0; padding-top: 0; }
+
+/* feedback ratings: five big targets in a row */
+.rating-scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; }
+.rate { margin: 0; position: relative; }
+.rate input { position: absolute; opacity: 0; pointer-events: none; }
+.rate span { display: flex; align-items: center; justify-content: center; min-height: 48px; border: 2px solid var(--ctl); border-radius: 12px;
+  background: #fff; font-weight: 700; cursor: pointer; }
+.rate input:checked + span { border-color: var(--teal); background: var(--teal-soft); color: var(--teal-dark); }
+.rate input:focus-visible + span { outline: 3px solid var(--navy); outline-offset: 2px; box-shadow: 0 0 0 2px #fff; }
+.rating-ends { display: flex; justify-content: space-between; gap: 1rem; margin-top: .3rem; }
+/* clarity and helpfulness read "high = good"; pressure reads "high = a lot of pressure": its chips look different on purpose */
+.rating-pressure .rate span { border-style: dashed; }
+
+.big-btn { min-height: 56px; font-size: 1.1rem; }

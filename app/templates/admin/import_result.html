@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.import.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <h1>{{ t('admin.import.title') }}</h1>
+  {% if report.fatal %}
+  <div class="flash flash-error" role="alert">{{ t('admin.import.fatal.' ~ report.fatal) }}</div>
+  {% else %}
+  <section class="grid two">
+    <div class="card stat"><b>{{ report.added }}</b>{{ t('admin.import.added') }}</div>
+    <div class="card stat"><b>{{ report.skipped }}</b>{{ t('admin.import.skipped') }}</div>
+    <div class="card stat"><b>{{ report.invalid | length }}</b>{{ t('admin.import.invalid') }}</div>
+  </section>
+  <p class="muted">{{ t('admin.import.note') }}</p>
+  {% if shown_invalid %}
+  <section class="card stack">
+    <h2>{{ t('admin.import.invalid_title') }}</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.import.ref') }}</th><th>{{ t('admin.import.field') }}</th><th>{{ t('admin.import.reason') }}</th></tr></thead>
+      <tbody>
+      {% for ref, errs in shown_invalid %}{% for name, code in errs.items() %}
+        <tr><td class="nowrap">{{ ref }}</td><td>{{ t('admin.q.field.' ~ name) }}</td><td>{{ t('admin.q.err.' ~ code) }}</td></tr>
+      {% endfor %}{% endfor %}
+      </tbody>
+    </table></div>
+    {% if report.invalid | length > shown_invalid | length %}<p class="muted small">{{ t('admin.import.more', n=(report.invalid | length) - (shown_invalid | length)) }}</p>{% endif %}
+  </section>
+  {% endif %}
+  {% endif %}
+  <p><a class="btn btn-primary" href="/admin/questions">{{ t('admin.import.back') }}</a></p>
+</div>
+{% endblock %}

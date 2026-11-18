@@ -1,0 +1,21 @@
+{
+  "title": "Gói của bạn",
+  "state": {
+    "free": { "title": "Miễn phí trong thời gian thử nghiệm", "body": "Trong lúc chúng mình thử nghiệm ứng dụng cùng các bạn sinh viên, mọi thứ đều miễn phí. Bạn không cần làm gì thêm." },
+    "staff": { "title": "Tài khoản nhân sự", "body": "Tài khoản nhân sự không cần mua gói." },
+    "trialing": { "title": "Đang dùng miễn phí", "body": "Bạn được dùng đầy đủ đến hết ngày {date}." },
+    "active": { "title": "Gói của bạn đang hoạt động", "body": "Gói của bạn có hiệu lực đến hết ngày {date}." },
+    "expired": { "title": "Thời gian dùng miễn phí đã hết", "body": "Hãy chọn một gói bên dưới để tiếp tục học.", "body_dated": "Quyền truy cập của bạn đã hết hạn vào ngày {date}. Hãy chọn một gói bên dưới để tiếp tục học." }
+  },
+  "expired_data_note": "Tiến độ học của bạn vẫn được giữ lại. Bạn vẫn có thể tải xuống hoặc xóa dữ liệu của mình trong phần Cài đặt.",
+  "back_to_learning": "Tiếp tục học",
+  "plans": { "title": "Các gói", "days": "Dùng được {days} ngày", "none": "Hiện chưa có gói nào được mở. Bạn vui lòng liên hệ hỗ trợ nhé." },
+  "pay": {
+    "title": "Cách thanh toán",
+    "no_instructions": "Thông tin thanh toán chưa được cập nhật. Bạn vui lòng liên hệ hỗ trợ nhé.",
+    "code": "Khi thanh toán, bạn hãy ghi mã người học {code} vào nội dung chuyển khoản để chúng mình tìm được khoản thanh toán của bạn.",
+    "manual": "Chúng mình xác nhận thanh toán bằng tay, nên có thể cần một chút thời gian để thời hạn của bạn được gia hạn. Ngày mới sẽ hiện ngay trên trang này.",
+    "support": "Cần hỗ trợ? Hãy viết cho chúng mình qua",
+    "no_card": "Trang web này không bao giờ hỏi số thẻ hay mật khẩu ngân hàng của bạn."
+  }
+}

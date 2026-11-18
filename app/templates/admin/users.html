@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.users.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <h1>{{ t('admin.users.title') }}</h1>
+  <form method="get" action="/admin/users" class="card filters">
+    <div class="grid two">
+      <div class="field"><label for="u-q">{{ t('admin.users.search') }}</label>
+        <input type="text" id="u-q" name="q" value="{{ f.q }}" maxlength="100" placeholder="{{ t('admin.users.search_hint') }}"></div>
+      <div class="field"><label for="u-role">{{ t('admin.users.col.role') }}</label>
+        <select id="u-role" name="role"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for r in roles %}<option value="{{ r }}"{% if f.role == r %} selected{% endif %}>{{ t('admin.role.' ~ r) }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" type="submit">{{ t('admin.q.filter.apply') }}</button>
+      <a class="btn btn-secondary" href="/admin/users">{{ t('admin.q.filter.reset') }}</a>
+      <span class="muted">{{ t('admin.users.count', n=pager.total) }}</span>
+    </div>
+  </form>
+
+  {% if rows %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>{{ t('admin.users.col.code') }}</th><th>{{ t('admin.users.col.email') }}</th><th>{{ t('admin.users.col.role') }}</th>
+      <th>{{ t('admin.users.col.level') }}</th><th>{{ t('admin.users.col.created') }}</th><th>{{ t('admin.users.col.last_login') }}</th>
+      <th>{{ t('admin.users.col.access') }}</th></tr></thead>
+    <tbody>
+    {% for u, access in rows %}
+      <tr>
+        <td class="nowrap"><a href="/admin/users/{{ u.id }}">{{ u.public_id }}</a></td>
+        <td>{{ u.email }}</td>
+        <td>{{ t('admin.role.' ~ u.role) }}</td>
+        <td>{{ u.level or '—' }}</td>
+        <td class="nowrap">{{ fmt_date(u.created_at) }}</td>
+        <td class="nowrap">{{ fmt_dt(u.last_login_at) }}</td>
+        <td><span class="badge {{ 'ok' if access.state in ('active', 'free', 'staff') else ('warn' if access.state == 'trialing' else 'bad') }}">{{ t('admin.access.' ~ access.state) }}</span>
+            {% if access.until %}<span class="muted small nowrap">{{ fmt_date(access.until) }}</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% include "admin/_pager.html" %}
+  {% else %}
+  <p class="card muted">{{ t('admin.users.empty') }}</p>
+  {% endif %}
+</div>
+{% endblock %}

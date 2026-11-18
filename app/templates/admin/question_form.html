@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{{ (t('admin.q.edit_title', id=question.id) if question else t('admin.q.new_title')) }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+{% macro err(name) %}{% if errors.get(name) %}<p class="error-text" role="alert">{{ t('admin.q.err.' ~ errors.get(name)) }}</p>{% endif %}{% endmacro %}
+<div class="stack">
+  <h1>{{ t('admin.q.edit_title', id=question.id) if question else t('admin.q.new_title') }}</h1>
+  {% include "admin/_banner.html" %}
+  {% if errors %}<div class="flash flash-error" role="alert">{{ t('admin.q.fix_errors') }}</div>{% endif %}
+
+  {% if question %}
+  <section class="card stack" aria-labelledby="review-h">
+    <h2 id="review-h">{{ t('admin.q.review_title') }}</h2>
+    <p><span class="badge {{ 'ok' if question.review_status == 'approved' else ('bad' if question.review_status == 'needs_edit' else 'warn') }}">{{ t('admin.review.' ~ question.review_status) }}</span>
+      <span class="muted small">
+        {% if question.reviewed_at %}{{ t('admin.q.reviewed_at', when=fmt_dt(question.reviewed_at), who=(reviewer.public_id if reviewer else '—')) }}{% else %}{{ t('admin.q.never_reviewed') }}{% endif %}
+      </span></p>
+    <form method="post" action="/admin/questions/{{ question.id }}/review" class="row">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <button class="btn btn-primary" type="submit" name="status" value="approved">{{ t('admin.q.approve') }}</button>
+      <button class="btn btn-secondary" type="submit" name="status" value="needs_edit">{{ t('admin.q.needs_edit') }}</button>
+      <button class="btn btn-secondary" type="submit" name="status" value="pending_review">{{ t('admin.q.set_pending') }}</button>
+    </form>
+    <p class="muted small">{{ t('admin.q.reset_hint') }} · {{ t('admin.q.meta', source=question.source, day=question.day) }}</p>
+  </section>
+  {% endif %}
+
+  <form method="post" action="{{ ('/admin/questions/' ~ question.id) if question else '/admin/questions/new' }}" class="card stack" novalidate>
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    <div class="field"><label for="question_zh">{{ t('admin.q.form.question_zh') }}</label>
+      <textarea id="question_zh" name="question_zh" lang="zh-TW" maxlength="600" required>{{ v.question_zh }}</textarea>{{ err('question_zh') }}</div>
+
+    <fieldset class="field" style="border:0;padding:0;margin:0 0 1rem">
+      <legend><b>{{ t('admin.q.form.options') }}</b></legend>
+      <p class="hint">{{ t('admin.q.form.options_hint') }}</p>
+      {% for i in range(4) %}
+      <div class="field">
+        <label for="option_{{ i }}">{{ t('admin.q.form.option', n=i + 1) }}</label>
+        <div class="row">
+          <input class="grow" type="text" id="option_{{ i }}" name="option_{{ i }}" value="{{ v['option_' ~ i] }}" maxlength="240" required>
+          <label class="choice"><input type="radio" name="correct" value="{{ i }}"{% if v.correct == (i | string) %} checked{% endif %}> {{ t('admin.q.form.correct') }}</label>
+        </div>
+      </div>
+      {% endfor %}
+      {{ err('options') }}{{ err('correct_index') }}
+    </fieldset>
+
+    <div class="grid two">
+      <div class="field"><label for="stage">{{ t('admin.q.form.stage') }}</label>
+        <select id="stage" name="stage">{% for s in stages %}<option value="{{ s }}"{% if v.stage == s %} selected{% endif %}>{{ t('admin.stage.' ~ s) }}</option>{% endfor %}</select>{{ err('stage') }}</div>
+      <div class="field"><label for="level">{{ t('admin.q.form.level') }}</label>
+        <select id="level" name="level">{% for s in levels %}<option value="{{ s }}"{% if v.level == s %} selected{% endif %}>{{ s }}</option>{% endfor %}</select>{{ err('level') }}</div>
+      <div class="field"><label for="skill">{{ t('admin.q.form.skill') }}</label>
+        <select id="skill" name="skill">{% for s in skills %}<option value="{{ s }}"{% if v.skill == s %} selected{% endif %}>{{ t('admin.skill.' ~ s) }}</option>{% endfor %}</select>{{ err('skill') }}</div>
+      <div class="field"><label for="topic">{{ t('admin.q.form.topic') }}</label>
+        <input type="text" id="topic" name="topic" value="{{ v.topic }}" maxlength="30">
+        <p class="hint">{{ t('admin.q.form.topic_hint') }}</p>{{ err('topic') }}</div>
+    </div>
+
+    <div class="field"><label for="explanation_vi">{{ t('admin.q.form.explanation_vi') }}</label>
+      <textarea id="explanation_vi" name="explanation_vi" maxlength="1200">{{ v.explanation_vi }}</textarea>{{ err('explanation_vi') }}</div>
+    <div class="field"><label for="explanation_zh">{{ t('admin.q.form.explanation_zh') }}</label>
+      <textarea id="explanation_zh" name="explanation_zh" lang="zh-TW" maxlength="1200">{{ v.explanation_zh }}</textarea>{{ err('explanation_zh') }}</div>
+    <div class="field"><label for="explanation_en">{{ t('admin.q.form.explanation_en') }}</label>
+      <textarea id="explanation_en" name="explanation_en" lang="en" maxlength="1200">{{ v.explanation_en }}</textarea>{{ err('explanation_en') }}</div>
+    <div class="field"><label for="review_note">{{ t('admin.q.form.review_note') }}</label>
+      <textarea id="review_note" name="review_note" maxlength="600">{{ v.review_note }}</textarea>{{ err('review_note') }}</div>
+
+    <div class="row">
+      <button class="btn btn-primary" type="submit">{{ t('common.btn.save') }}</button>
+      <a class="btn btn-secondary" href="/admin/questions">{{ t('common.btn.back') }}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

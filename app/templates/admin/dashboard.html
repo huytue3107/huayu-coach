@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.dash.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% macro n_label(n) %}<span class="muted small">{{ t('admin.stats.n', n=n) }}</span>{% endmacro %}
+{% macro average(a) %}
+  {% if a.value is none %}<span class="muted">{{ t('admin.stats.no_data') }}</span>
+  {% else %}<span class="big-value">{{ one(a.value) }}</span> <span class="muted">/ 5</span>{% endif %}
+  {{ n_label(a.n) }}
+{% endmacro %}
+{% macro share(s) %}
+  {% if s.value is none %}<span class="muted">{{ t('admin.stats.no_data') }}</span> {{ n_label(s.n) }}
+  {% else %}<span class="big-value">{{ pct(s.value) }}</span> <span class="muted small">{{ t('admin.stats.of', part=s.part, total=s.total) }}</span>{% endif %}
+{% endmacro %}
+
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <div>
+    <h1>{{ t('admin.dash.title') }}</h1>
+    <p class="muted">{{ t('admin.dash.lead_admin') if is_admin else t('admin.dash.lead_teacher') }}</p>
+  </div>
+
+  {% if is_admin %}
+  <section class="grid two" aria-label="{{ t('admin.dash.learners') }}">
+    <div class="card stat"><b>{{ d.learners_total }}</b>{{ t('admin.dash.learners') }}</div>
+    <div class="card stat"><b>{{ d.learners_active_7d }}</b>{{ t('admin.dash.active') }}</div>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('admin.pilot.title') }}</h2>
+    <p class="muted small">{{ t('admin.pilot.note') }}</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>{{ t('admin.pilot.metric') }}</th><th>{{ t('admin.pilot.value') }}</th><th>{{ t('admin.pilot.target') }}</th></tr></thead>
+      <tbody>
+        <tr><td>{{ t('admin.pilot.clarity') }}</td><td>{{ average(d.clarity) }}</td>
+            <td>{% if d.clarity.meets_target is none %}—{% elif d.clarity.meets_target %}<span class="badge ok">{{ t('admin.pilot.met') }}</span>{% else %}<span class="badge warn">{{ t('admin.pilot.below') }}</span>{% endif %}</td></tr>
+        <tr><td>{{ t('admin.pilot.helpfulness') }}</td><td>{{ average(d.helpfulness) }}</td>
+            <td>{% if d.helpfulness.meets_target is none %}—{% elif d.helpfulness.meets_target %}<span class="badge ok">{{ t('admin.pilot.met') }}</span>{% else %}<span class="badge warn">{{ t('admin.pilot.below') }}</span>{% endif %}</td></tr>
+        <tr><td>{{ t('admin.pilot.pressure') }}</td><td>{{ average(d.pressure) }}</td><td>—</td></tr>
+        <tr><td>{{ t('admin.pilot.accepted') }}</td><td>{{ share(d.accepted_share) }}</td><td>—</td></tr>
+        <tr><td>{{ t('admin.pilot.return') }}</td><td>{{ share(d.return_rate) }}</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="grid two">
+    <div class="card stack">
+      <h2>{{ t('admin.interruptions.by_reason') }}</h2>
+      {% if d.interruptions_total == 0 %}<p class="muted">{{ t('admin.stats.no_data') }}</p>{% else %}
+      <div class="table-wrap"><table><tbody>
+        {% for code, n in d.interruptions_by_reason.items() %}
+        <tr><td>{{ t('admin.reason.' ~ code) }}</td><td class="num">{{ n }}</td>
+            <td><div class="bar" aria-hidden="true"><span style="width: {{ (n * 100 // d.interruptions_total) }}%"></span></div></td></tr>
+        {% endfor %}
+      </tbody></table></div>
+      <p class="muted small">{{ t('admin.interruptions.total', n=d.interruptions_total) }}</p>{% endif %}
+    </div>
+    <div class="card stack">
+      <h2>{{ t('admin.interruptions.by_status') }}</h2>
+      {% if d.interruptions_total == 0 %}<p class="muted">{{ t('admin.stats.no_data') }}</p>{% else %}
+      <div class="table-wrap"><table><tbody>
+        {% for code, n in d.interruptions_by_status.items() %}
+        <tr><td>{{ t('admin.istatus.' ~ code) }}</td><td class="num">{{ n }}</td>
+            <td><div class="bar" aria-hidden="true"><span style="width: {{ (n * 100 // d.interruptions_total) }}%"></span></div></td></tr>
+        {% endfor %}
+      </tbody></table></div>{% endif %}
+    </div>
+  </section>
+
+  <section class="grid two">
+    <div class="card stack">
+      <h2>{{ t('admin.proposals.title') }}</h2>
+      {% if d.proposals_total == 0 %}<p class="muted">{{ t('admin.stats.no_data') }}</p>{% else %}
+      <div class="table-wrap"><table><tbody>
+        {% for code, n in d.proposals_by_status.items() %}<tr><td>{{ t('admin.pstatus.' ~ code) }}</td><td class="num">{{ n }}</td></tr>{% endfor %}
+      </tbody></table></div>
+      <p class="muted small">{{ t('admin.proposals.total', n=d.proposals_total) }}</p>{% endif %}
+    </div>
+    <div class="card stack">
+      <h2>{{ t('admin.subs.title') }}</h2>
+      <div class="table-wrap"><table><tbody>
+        {% for code, n in d.subscriptions.items() %}<tr><td>{{ t('admin.sub.' ~ code) }}</td><td class="num">{{ n }}</td></tr>{% endfor %}
+      </tbody></table></div>
+      {% if not billing_enabled %}<p class="muted small">{{ t('admin.subs.billing_off') }}</p>{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="card stack">
+    <h2>{{ t('admin.bank.title') }}</h2>
+    <div class="grid two">
+      <div class="stat"><b>{{ d_question_bank.approved }}</b>{{ t('admin.review.approved') }}</div>
+      <div class="stat"><b>{{ d_question_bank.pending_review }}</b>{{ t('admin.review.pending_review') }}</div>
+      <div class="stat"><b>{{ d_question_bank.needs_edit }}</b>{{ t('admin.review.needs_edit') }}</div>
+      <div class="stat"><b>{{ d_question_bank.total }}</b>{{ t('admin.bank.total') }}</div>
+    </div>
+    <p><a class="btn btn-primary" href="/admin/questions">{{ t('admin.bank.open') }}</a></p>
+  </section>
+</div>
+{% endblock %}

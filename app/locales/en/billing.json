@@ -1,0 +1,21 @@
+{
+  "title": "Your plan",
+  "state": {
+    "free": { "title": "Free during the pilot", "body": "While we test the app with students, everything is free. You do not need to do anything." },
+    "staff": { "title": "Staff account", "body": "Staff accounts do not need a plan." },
+    "trialing": { "title": "Free access", "body": "Everything is open for you until {date}." },
+    "active": { "title": "Your plan is active", "body": "Your plan runs until {date}." },
+    "expired": { "title": "Your free access has ended", "body": "Choose a plan below to keep learning.", "body_dated": "Your access ended on {date}. Choose a plan below to keep learning." }
+  },
+  "expired_data_note": "Your progress is saved. You can still download or delete your data in Settings.",
+  "back_to_learning": "Continue learning",
+  "plans": { "title": "Plans", "days": "{days} days of access", "none": "No plans are open right now. Please contact support." },
+  "pay": {
+    "title": "How to pay",
+    "no_instructions": "The payment details have not been added yet. Please contact support.",
+    "code": "When you pay, write your learner code {code} in the transfer note so we can find your payment.",
+    "manual": "We confirm payments by hand, so it can take a little while before your access is extended. You will see the new date on this page.",
+    "support": "Questions? Write to",
+    "no_card": "This site never asks for your card number or bank password."
+  }
+}

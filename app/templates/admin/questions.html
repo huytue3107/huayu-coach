@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin.q.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/admin.css">{% endblock %}
+{% block body_class %}admin{% endblock %}
+{% block content %}
+{% include "admin/_nav.html" %}
+<div class="stack">
+  <div class="row">
+    <h1 class="grow">{{ t('admin.q.title') }}</h1>
+    <a class="btn btn-primary" href="/admin/questions/new">{{ t('admin.q.new') }}</a>
+  </div>
+  {% include "admin/_banner.html" %}
+
+  <form method="get" action="/admin/questions" class="card filters">
+    <div class="grid two">
+      <div class="field"><label for="f-q">{{ t('admin.q.filter.search') }}</label>
+        <input type="text" id="f-q" name="q" value="{{ f.q }}" maxlength="100"></div>
+      <div class="field"><label for="f-stage">{{ t('admin.q.filter.stage') }}</label>
+        <select id="f-stage" name="stage"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for s in stages %}<option value="{{ s }}"{% if f.stage == s %} selected{% endif %}>{{ t('admin.stage.' ~ s) }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="f-skill">{{ t('admin.q.filter.skill') }}</label>
+        <select id="f-skill" name="skill"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for s in skills %}<option value="{{ s }}"{% if f.skill == s %} selected{% endif %}>{{ t('admin.skill.' ~ s) }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="f-level">{{ t('admin.q.filter.level') }}</label>
+        <select id="f-level" name="level"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for s in levels %}<option value="{{ s }}"{% if f.level == s %} selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="f-status">{{ t('admin.q.filter.status') }}</label>
+        <select id="f-status" name="status"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for s in statuses %}<option value="{{ s }}"{% if f.status == s %} selected{% endif %}>{{ t('admin.review.' ~ s) }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="f-topic">{{ t('admin.q.filter.topic') }}</label>
+        <select id="f-topic" name="topic"><option value="">{{ t('admin.q.filter.all') }}</option>
+          {% for s in topics %}<option value="{{ s }}"{% if f.topic == s %} selected{% endif %}>{{ s }}</option>{% endfor %}</select></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" type="submit">{{ t('admin.q.filter.apply') }}</button>
+      <a class="btn btn-secondary" href="/admin/questions">{{ t('admin.q.filter.reset') }}</a>
+      <span class="muted">{{ t('admin.q.count', n=pager.total) }}</span>
+    </div>
+  </form>
+
+  {% if questions %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>{{ t('admin.q.col.id') }}</th><th>{{ t('admin.q.col.question') }}</th><th>{{ t('admin.q.col.kind') }}</th>
+      <th>{{ t('admin.q.col.topic') }}</th><th>{{ t('admin.q.col.status') }}</th><th>{{ t('admin.q.col.actions') }}</th></tr></thead>
+    <tbody>
+    {% for q in questions %}
+      <tr>
+        <td class="nowrap"><a href="/admin/questions/{{ q.id }}">{{ q.id }}</a></td>
+        <td><span lang="zh-TW">{{ q.question_zh | truncate(40, True, '…') }}</span></td>
+        <td class="nowrap">{{ t('admin.stage.' ~ q.stage) }} · {{ q.level }} · {{ t('admin.skill.' ~ q.skill) }}</td>
+        <td>{{ q.topic or '—' }}</td>
+        <td><span class="badge {{ 'ok' if q.review_status == 'approved' else ('bad' if q.review_status == 'needs_edit' else 'warn') }}">{{ t('admin.review.' ~ q.review_status) }}</span></td>
+        <td>
+          <form method="post" action="/admin/questions/{{ q.id }}/review" class="row tight">
+            <input type="hidden" name="csrf" value="{{ csrf_token }}"><input type="hidden" name="next" value="{{ list_url }}">
+            {% if q.review_status != 'approved' %}<button class="btn btn-sm btn-primary" type="submit" name="status" value="approved">{{ t('admin.q.approve') }}</button>{% endif %}
+            {% if q.review_status != 'needs_edit' %}<button class="btn btn-sm btn-secondary" type="submit" name="status" value="needs_edit">{{ t('admin.q.needs_edit') }}</button>{% endif %}
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% include "admin/_pager.html" %}
+  {% else %}
+  <p class="card muted">{{ t('admin.q.empty') }}</p>
+  {% endif %}
+
+  <section class="card stack">
+    <h2>{{ t('admin.q.import_title') }}</h2>
+    <p class="muted">{{ t('admin.q.import_help') }}</p>
+    <form method="post" action="/admin/questions/import" enctype="multipart/form-data" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <div class="field"><label for="import-file">{{ t('admin.q.file') }}</label>
+        <input type="file" id="import-file" name="file" accept="application/json,.json" required></div>
+      <div class="row">
+        <button class="btn btn-primary" type="submit">{{ t('admin.q.import_button') }}</button>
+        <a class="btn btn-secondary" href="/admin/questions/export" download>{{ t('admin.q.export') }}</a>
+      </div>
+    </form>
+  </section>
+</div>
+{% endblock %}

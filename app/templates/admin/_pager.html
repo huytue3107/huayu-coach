@@ -1,0 +1,7 @@
+{% if pager.pages > 1 %}
+<nav class="pager" aria-label="{{ t('admin.pager.label') }}">
+  {% if pager.prev_url %}<a class="btn btn-secondary btn-sm" href="{{ pager.prev_url }}">{{ t('admin.pager.prev') }}</a>{% else %}<span></span>{% endif %}
+  <span class="muted">{{ t('admin.pager.page', page=pager.page, pages=pager.pages) }}</span>
+  {% if pager.next_url %}<a class="btn btn-secondary btn-sm" href="{{ pager.next_url }}">{{ t('admin.pager.next') }}</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}

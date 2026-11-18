@@ -1,0 +1,23 @@
+{
+  "skip": "Chuyển đến nội dung chính",
+  "tagline": "Không thúc ép — mà thấu hiểu.",
+  "nav": {
+    "main": "Menu chính", "today": "Hôm nay", "stuck": "Mình bị kẹt", "progress": "Tiến độ", "plan": "Kế hoạch",
+    "admin": "Quản trị", "rest": "Nghỉ", "settings": "Cài đặt", "login": "Đăng nhập", "logout": "Đăng xuất",
+    "register": "Đăng ký", "language": "Ngôn ngữ"
+  },
+  "footer": { "privacy": "Quyền riêng tư", "terms": "Điều khoản", "support": "Hỗ trợ" },
+  "btn": { "save": "Lưu", "cancel": "Hủy", "back": "Quay lại", "next": "Tiếp tục", "confirm": "Xác nhận", "home": "Về trang chính",
+           "delete": "Xóa", "download": "Tải xuống", "send": "Gửi", "start": "Bắt đầu" },
+  "errors": {
+    "403": { "title": "Không có quyền truy cập", "body": "Bạn không được phép xem trang này." },
+    "404": { "title": "Không tìm thấy trang", "body": "Trang bạn tìm không tồn tại hoặc đã được chuyển." },
+    "429": { "title": "Thao tác quá nhanh", "body": "Bạn thử lại sau ít phút nhé." },
+    "500": { "title": "Có lỗi xảy ra", "body": "Lỗi này là do hệ thống, không phải do bạn. Hãy thử lại sau." },
+    "csrf": "Phiên làm việc đã hết hạn. Hãy tải lại trang rồi thử lại."
+  },
+  "flash": {
+    "saved": "Đã lưu.", "error": "Có lỗi, vui lòng thử lại.",
+    "access_expired": "Thời gian dùng miễn phí đã hết. Hãy chọn một gói để tiếp tục học."
+  }
+}

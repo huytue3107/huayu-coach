@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}{{ t('coach.proposal.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/coach.css">{% endblock %}
+{% block content %}
+<section class="stack">
+  <div class="stack">
+    <h1>{{ t('coach.proposal.title') }}</h1>
+    <p class="muted">{{ t('coach.proposal.you_said') }} <strong>{{ view.reason_title }}</strong></p>
+  </div>
+
+  {% if view.status == 'pending' %}
+    <p class="notice" role="note">{{ t('coach.proposal.notice') }}</p>
+  {% endif %}
+
+  {% if view.status == 'pending' and not view.stale %}
+    <div class="card soft stack">
+      {% if view.ai_text %}
+        <p><span class="badge">{{ t('coach.proposal.ai_label') }}</span></p>
+        <p>{{ view.ai_text }}</p>
+        <p class="hint">{{ t('coach.proposal.ai_note') }}</p>
+      {% else %}
+        <p>{{ view.summary }}</p>
+        {% if view.glance %}<p class="muted">{{ view.glance }}</p>{% endif %}
+      {% endif %}
+    </div>
+
+    <form method="post" action="/proposal/{{ view.id }}/decide" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <fieldset class="plain">
+        <legend>{{ t('coach.proposal.items_title') }}</legend>
+        <p class="hint">{{ t('coach.proposal.items_hint') }}</p>
+        <div class="stack">
+          {% for item in view.cards %}
+          {# A list is not allowed inside a <label>, so the evidence sits next to it and is tied to the checkbox with aria-describedby. #}
+          <div class="proposal-item">
+            <input type="checkbox" id="item-{{ item.id }}" name="item_id" value="{{ item.id }}"{% if item.evidence %} aria-describedby="why-{{ item.id }}"{% endif %}>
+            <div class="item-body">
+              <label class="item-label" for="item-{{ item.id }}">
+                <strong class="item-title">{{ item.title }}{% if item.topic %}<span class="zh topic-chip" lang="zh-TW">{{ item.topic }}</span>{% endif %}</strong>
+                <span class="item-text">{{ item.text }}</span>
+              </label>
+              {% if item.evidence %}
+              <div id="why-{{ item.id }}">
+                <span class="item-why small muted">{{ t('coach.proposal.evidence_title') }}</span>
+                <ul class="evidence">
+                  {% for fact in item.evidence %}<li>{{ fact }}</li>{% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </fieldset>
+
+      <div class="decide-actions">
+        <button class="btn btn-primary btn-block" type="submit" name="decision" value="accept_selected">{{ t('coach.proposal.btn_selected') }}</button>
+        <button class="btn btn-secondary btn-block" type="submit" name="decision" value="accept_all">{{ t('coach.proposal.btn_all') }}</button>
+        <button class="btn btn-secondary btn-block" type="submit" name="decision" value="reject">{{ t('coach.proposal.btn_reject') }}</button>
+      </div>
+    </form>
+
+    <p class="center"><a href="/plan">{{ t('coach.proposal.manual') }}</a></p>
+
+  {% elif view.status == 'pending' %}
+    <div class="card accent-orange stack">
+      <h2>{{ t('coach.proposal.stale_title') }}</h2>
+      <p>{{ t('coach.proposal.stale_body') }}</p>
+      <p><a class="btn btn-primary" href="/stuck">{{ t('coach.proposal.ask_again') }}</a></p>
+    </div>
+    {% if view.newer_id %}
+    <p><a href="/proposal/{{ view.newer_id }}">{{ t('coach.proposal.open_other') }} {{ t('coach.proposal.open_other_link') }}</a></p>
+    {% endif %}
+
+  {% elif view.status == 'superseded' %}
+    <div class="card accent-orange stack">
+      <p>{{ t('coach.proposal.outcome_superseded') }}</p>
+      <p class="row">
+        <a class="btn btn-primary" href="/stuck">{{ t('coach.proposal.ask_again') }}</a>
+        {% if view.newer_id %}<a class="btn btn-secondary" href="/proposal/{{ view.newer_id }}">{{ t('coach.proposal.open_other_link') }}</a>{% endif %}
+      </p>
+    </div>
+
+  {% else %}
+    <div class="card accent stack">
+      <p>
+        {% if view.status == 'accepted' %}{{ t('coach.proposal.outcome_accepted') }}
+        {% elif view.status == 'partial' %}{{ t('coach.proposal.outcome_partial') }}
+        {% else %}{{ t('coach.proposal.outcome_rejected') }}{% endif %}
+      </p>
+      <p><a class="btn btn-primary" href="/proposal/{{ view.id }}/done">{{ t('coach.proposal.see_result') }}</a></p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

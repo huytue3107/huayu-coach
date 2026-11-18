@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "learn/_macros.html" import fdate with context %}
+{% block title %}{{ t('learn.progress.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <div>
+    <h1>{{ t('learn.progress.title') }}</h1>
+    <p class="muted">{{ t('learn.progress.since', date=fdate(r.since)) }}</p>
+  </div>
+
+  <section class="card stack">
+    <h2>{{ t('learn.progress.skills_title') }}</h2>
+    <ul class="rows">
+      {% for s in r.skills %}
+      <li>
+        <span>{{ t('learn.skill.' ~ s.skill) }}</span>
+        <span class="val">
+          {% if s.percent is not none %}{{ t('learn.progress.accuracy', correct=s.correct, n=s.answers, percent=s.percent) }}
+          {% elif s.answers %}{{ t('learn.progress.answers_so_far', n=s.answers) }}
+          {% else %}{{ t('learn.progress.no_answers') }}{% endif %}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="muted small">{{ t('learn.progress.skills_note') }}</p>
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('learn.progress.tasks_title') }}</h2>
+    {% if r.tasks_total %}
+      <p class="stat"><b>{{ r.tasks_done }}</b>{{ t('learn.progress.tasks_line') }}</p>
+      <p class="muted small">{{ t('learn.progress.tasks_note', total=r.tasks_total) }}</p>
+    {% else %}
+      <p class="muted">{{ t('learn.progress.tasks_none') }}</p>
+    {% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('learn.progress.stuck_title') }}</h2>
+    {% if r.interruptions %}
+      <ul class="rows">
+        {% for row in r.reasons %}
+        <li><span>{{ t('learn.progress.reason.' ~ row.reason) }}</span><span class="val">{{ t('learn.progress.stuck_line', n=row.count) }}</span></li>
+        {% endfor %}
+      </ul>
+      <p class="muted small">{{ t('learn.progress.stuck_total', n=r.interruptions) }}</p>
+    {% else %}
+      <p class="muted">{{ t('learn.progress.stuck_none') }}</p>
+    {% endif %}
+  </section>
+
+  <section class="card stack">
+    <h2>{{ t('learn.progress.plan_title') }}</h2>
+    {% if r.plan_changes %}
+      <p>{{ t('learn.progress.plan_count', n=r.plan_changes) }}</p>
+      <p class="muted">{{ t('learn.progress.plan_last', date=fdate(r.last_change.day)) }}, {{ t('learn.progress.change_source.' ~ r.last_change.source) }}</p>
+      {% if r.last_change.changes %}
+      <ul class="rows">
+        {% for ch in r.last_change.changes %}
+        <li>
+          <span>{{ t('learn.progress.field.' ~ ch.field) }}</span>
+          <span class="val">{% if ch.scalar %}{{ ch.old if ch.old is not none else t('learn.progress.off') }} &rarr; {{ ch.new if ch.new is not none else t('learn.progress.off') }}{% else %}{{ t('learn.progress.updated') }}{% endif %}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    {% else %}
+      <p class="muted">{{ t('learn.progress.plan_none') }}</p>
+    {% endif %}
+  </section>
+
+  {% if r.pretest or r.posttest or r.posttest_opens %}
+  <section class="card stack">
+    <h2>{{ t('learn.progress.tests_title') }}</h2>
+    <ul class="rows">
+      {% if r.pretest %}<li><span>{{ t('learn.progress.tests_pre') }}</span><span class="val">{{ t('learn.progress.tests_line', correct=r.pretest.correct, total=r.pretest.total) }}</span></li>{% endif %}
+      {% if r.posttest %}<li><span>{{ t('learn.progress.tests_post') }}</span><span class="val">{{ t('learn.progress.tests_line', correct=r.posttest.correct, total=r.posttest.total) }}</span></li>{% endif %}
+    </ul>
+    {% if not r.posttest %}
+      {% if r.posttest_ready %}
+        <a href="/posttest">{{ t('learn.progress.tests_cta') }}</a>
+      {% elif r.posttest_opens %}
+        <p class="muted">{{ t('learn.progress.tests_wait', date=fdate(r.posttest_opens)) }}</p>
+      {% endif %}
+    {% endif %}
+    <p class="muted small">{{ t('learn.progress.tests_caution') }}</p>
+  </section>
+  {% endif %}
+
+  <p class="center"><a class="btn btn-secondary" href="/today">{{ t('learn.common.back_today') }}</a></p>
+</div>
+{% endblock %}

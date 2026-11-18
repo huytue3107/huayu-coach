@@ -1,0 +1,60 @@
+{% extends "marketing/legal.html" %}
+{% set legal_title_key = 'marketing.privacy.title' %}
+{% block legal_intro %}{{ t('marketing.privacy.intro') }}{% endblock %}
+{% block legal_body %}
+  <section class="card stack" id="stored" aria-labelledby="stored-title">
+    <h2 id="stored-title">{{ t('marketing.privacy.s1_title') }}</h2>
+    <p>{{ t('marketing.privacy.s1_intro') }}</p>
+    {{ items('marketing.privacy.s1_i', 11) }}
+    <p class="notice">{{ t('marketing.privacy.s1_foot') }}</p>
+  </section>
+
+  <section class="card stack" id="where" aria-labelledby="where-title">
+    <h2 id="where-title">{{ t('marketing.privacy.s2_title') }}</h2>
+    <p>{{ t('marketing.privacy.s2_p1') }}</p>
+    <p>{{ t('marketing.privacy.s2_p2') }}</p>
+  </section>
+
+  <section class="card stack" id="who" aria-labelledby="who-title">
+    <h2 id="who-title">{{ t('marketing.privacy.s3_title') }}</h2>
+    <p>{{ t('marketing.privacy.s3_p1') }}</p>
+    <p>{{ t('marketing.privacy.s3_p2') }}</p>
+  </section>
+
+  <section class="card stack" id="ai" aria-labelledby="ai-title">
+    <h2 id="ai-title">{{ t('marketing.privacy.s4_title') }}</h2>
+    <p>{{ t('marketing.privacy.s4_p1') }}</p>
+    <p>{{ t('marketing.privacy.s4_p2') }}</p>
+    <p>{{ t('marketing.privacy.s4_p3') }}</p>
+    <p>{{ t('marketing.privacy.s4_p4') }}</p>
+    <p class="notice">{% if llm_enabled %}{{ t('marketing.privacy.s4_on') }}{% else %}{{ t('marketing.privacy.s4_off') }}{% endif %}</p>
+  </section>
+
+  <section class="card stack" id="cookies" aria-labelledby="cookies-title">
+    <h2 id="cookies-title">{{ t('marketing.privacy.s5_title') }}</h2>
+    <p>{{ t('marketing.privacy.s5_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="rights" aria-labelledby="rights-title">
+    <h2 id="rights-title">{{ t('marketing.privacy.s6_title') }}</h2>
+    {{ items('marketing.privacy.s6_i', 5) }}
+    <p>{{ langs(t('marketing.privacy.s6_pdpa'), [('個人資料保護法', 'zh-TW')]) }}</p>
+  </section>
+
+  <section class="card stack" id="retention" aria-labelledby="retention-title">
+    <h2 id="retention-title">{{ t('marketing.privacy.s7_title') }}</h2>
+    <p>{{ t('marketing.privacy.s7_p1') }}</p>
+    <p>{{ t('marketing.privacy.s7_p2') }}</p>
+    <p>{{ t('marketing.privacy.s7_p3') }}</p>
+  </section>
+
+  <section class="card stack" id="security" aria-labelledby="security-title">
+    <h2 id="security-title">{{ t('marketing.privacy.s8_title') }}</h2>
+    <p>{{ t('marketing.privacy.s8_p1') }}</p>
+  </section>
+
+  <section class="card stack" id="changes" aria-labelledby="changes-title">
+    <h2 id="changes-title">{{ t('marketing.privacy.s9_title') }}</h2>
+    <p>{{ t('marketing.privacy.s9_p1') }}</p>
+  </section>
+{% endblock %}

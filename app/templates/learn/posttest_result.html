@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ t('learn.posttest.result_title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>{{ t('learn.posttest.result_title') }}</h1>
+  <div class="grid two">
+    <section class="card stack">
+      <h2>{{ t('learn.posttest.before') }}</h2>
+      {% if pre.total %}
+        <p class="stat"><b>{{ pre.correct }} / {{ pre.total }}</b>{{ t('learn.posttest.right') }}</p>
+      {% else %}
+        <p class="muted">{{ t('learn.posttest.no_before') }}</p>
+      {% endif %}
+    </section>
+    <section class="card accent stack">
+      <h2>{{ t('learn.posttest.after') }}</h2>
+      <p class="stat"><b>{{ post.correct }} / {{ post.total }}</b>{{ t('learn.posttest.right') }}</p>
+    </section>
+  </div>
+  <p class="notice">{{ t('learn.posttest.caution') }}</p>
+  <a class="btn btn-primary btn-block" href="/today">{{ t('learn.posttest.cta') }}</a>
+</div>
+{% endblock %}

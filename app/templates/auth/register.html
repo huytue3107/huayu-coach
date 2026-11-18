@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "auth/_macros.html" import field with context %}
+{% block title %}{{ t('auth.register.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/auth.css">{% endblock %}
+{% block content %}
+<section class="card stack auth-card">
+{% if closed %}
+  <h1>{{ t('auth.register.closed_title') }}</h1>
+  <p class="muted">{{ t('auth.register.closed_body') }}</p>
+  <p><a class="btn btn-secondary" href="/login">{{ t('auth.login.title') }}</a></p>
+{% else %}
+  <div>
+    <h1>{{ t('auth.register.title') }}</h1>
+    <p class="muted">{{ t('auth.register.intro') }}</p>
+    {% if trial_days %}<p><span class="badge">{{ t('auth.register.trial', days=trial_days) }}</span></p>{% endif %}
+  </div>
+  <form method="post" action="/register" class="stack">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+    {{ field('email', t('auth.register.email'), type='email', value=form.email, autocomplete='email', maxlength=254) }}
+    {{ field('password', t('auth.register.password'), type='password', autocomplete='new-password', maxlength=limits['max_password'], hint=t('auth.register.password_hint', min=limits['min'])) }}
+    {% if invite_required %}
+    {{ field('invite', t('auth.register.invite'), value=form.invite, autocomplete='off', maxlength=100, hint=t('auth.register.invite_hint')) }}
+    {% endif %}
+    <button class="btn btn-primary btn-block" type="submit">{{ t('auth.register.submit') }}</button>
+  </form>
+  <p class="small muted">{{ t('auth.register.terms_note') }}</p>
+  <p class="small legal-links"><a href="/terms">{{ t('common.footer.terms') }}</a> <a href="/privacy">{{ t('common.footer.privacy') }}</a></p>
+  <p class="center">{{ t('auth.register.have_account') }} <a href="/login">{{ t('auth.login.title') }}</a></p>
+{% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,11 @@
+{# One labelled text/e-mail/password input with hint and error. Import with context (needs t, errors, limits). #}
+{% macro field(name, label, type="text", value="", hint=None, autocomplete=None, required=True, maxlength=None) -%}
+{% set err = (errors or {}).get(name) %}
+{% set desc = ((('h-' ~ name) if hint else '') ~ ' ' ~ (('e-' ~ name) if err else '')) | trim %}
+<div class="field">
+  <label for="f-{{ name }}">{{ label }}</label>
+  <input id="f-{{ name }}" name="{{ name }}" type="{{ type }}"{% if type != 'password' %} value="{{ value or '' }}"{% endif %}{% if required %} required{% endif %}{% if maxlength %} maxlength="{{ maxlength }}"{% endif %}{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %}{% if type == 'email' %} autocapitalize="none" spellcheck="false" inputmode="email"{% endif %}{% if err %} aria-invalid="true" autofocus{% endif %}{% if desc %} aria-describedby="{{ desc }}"{% endif %}>
+  {% if hint %}<p class="hint" id="h-{{ name }}">{{ hint }}</p>{% endif %}
+  {% if err %}<p class="error-text" id="e-{{ name }}" role="alert">{{ t(err, **limits) }}</p>{% endif %}
+</div>
+{%- endmacro %}

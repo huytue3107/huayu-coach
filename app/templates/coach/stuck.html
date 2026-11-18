@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ t('coach.stuck.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/coach.css">{% endblock %}
+{% block content %}
+<section class="stack">
+  <div class="stack">
+    <h1>{{ t('coach.stuck.title') }}</h1>
+    <p class="muted">{{ t('coach.stuck.lead') }}</p>
+    <p class="notice">{{ t('coach.stuck.promise') }}</p>
+  </div>
+
+  {% if pending %}
+  <div class="card warn row">
+    <span class="grow">{{ t('coach.stuck.open_proposal') }}</span>
+    <a class="btn btn-secondary" href="/proposal/{{ pending.id }}">{{ t('coach.stuck.open_proposal_link') }}</a>
+  </div>
+  {% endif %}
+
+  <form method="post" action="/stuck" class="stack stuck-form">
+    <input type="hidden" name="csrf" value="{{ csrf_token }}">
+
+    <fieldset class="plain">
+      <legend>{{ t('coach.stuck.legend') }}</legend>
+      <div class="choices">
+        {% for code in reasons %}
+        <label class="choice big">
+          <input type="radio" name="reason" value="{{ code }}" required>
+          <span>
+            <strong>{{ t('coach.reason.' ~ code ~ '.title') }}</strong>
+            <span class="muted small reason-desc">{{ t('coach.reason.' ~ code ~ '.desc') }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <div class="field stuck-minutes">
+      <label for="available_minutes">{{ t('coach.stuck.minutes_label') }}</label>
+      <input type="number" id="available_minutes" name="available_minutes" min="5" max="240" step="1" inputmode="numeric">
+      <p class="hint">{{ t('coach.stuck.minutes_hint') }}</p>
+    </div>
+
+    <div class="field">
+      <label for="note">{{ t('coach.stuck.note_label') }}</label>
+      <textarea id="note" name="note" maxlength="{{ max_note }}" rows="3"></textarea>
+      <p class="hint">{{ t('coach.stuck.note_hint') }}</p>
+    </div>
+
+    <button class="btn btn-primary btn-block" type="submit">{{ t('coach.stuck.submit') }}</button>
+  </form>
+
+  <p class="center"><a href="/rest">{{ t('coach.stuck.rest_link') }}</a></p>
+</section>
+{% endblock %}

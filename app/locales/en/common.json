@@ -1,0 +1,23 @@
+{
+  "skip": "Skip to main content",
+  "tagline": "Not pressure — understanding.",
+  "nav": {
+    "main": "Main menu", "today": "Today", "stuck": "I'm stuck", "progress": "Progress", "plan": "Plan",
+    "admin": "Admin", "rest": "Rest", "settings": "Settings", "login": "Log in", "logout": "Log out",
+    "register": "Sign up", "language": "Language"
+  },
+  "footer": { "privacy": "Privacy", "terms": "Terms", "support": "Support" },
+  "btn": { "save": "Save", "cancel": "Cancel", "back": "Back", "next": "Continue", "confirm": "Confirm", "home": "Back to home",
+           "delete": "Delete", "download": "Download", "send": "Send", "start": "Start" },
+  "errors": {
+    "403": { "title": "No access", "body": "You are not allowed to view this page." },
+    "404": { "title": "Page not found", "body": "This page does not exist or has moved." },
+    "429": { "title": "Too many attempts", "body": "Please try again in a few minutes." },
+    "500": { "title": "Something went wrong", "body": "This is a system problem, not yours. Please try again later." },
+    "csrf": "Your session expired. Reload the page and try again."
+  },
+  "flash": {
+    "saved": "Saved.", "error": "Something went wrong, please try again.",
+    "access_expired": "Your free access has ended. Choose a plan to keep learning."
+  }
+}

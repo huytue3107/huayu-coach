@@ -1,0 +1,26 @@
+{# Import with context:  {% from "marketing/_macros.html" import items, seo with context %}  (needs `t`) #}
+{% macro items(prefix, count, css='bullets') %}
+<ul class="{{ css }}">{% for i in range(1, count + 1) %}<li>{{ t(prefix ~ i) }}</li>{% endfor %}</ul>
+{% endmacro %}
+
+{# Text in which some words are in another language than the page: each given snippet is wrapped in <span lang=...> (WCAG 3.1.2).
+   pairs = [(snippet, lang), ...]. The text itself stays escaped; the snippets are template literals, never user input. #}
+{% macro langs(text, pairs) -%}
+{%- if not pairs -%}{{ text }}
+{%- else -%}
+  {%- set head = pairs[0] -%}{%- set tail = pairs[1:] -%}
+  {%- for part in text.split(head[0]) -%}{{ langs(part, tail) }}{% if not loop.last %}<span lang="{{ head[1] }}">{{ head[0] }}</span>{% endif %}{%- endfor -%}
+{%- endif -%}
+{%- endmacro %}
+
+{% macro seo(title_key, desc_key) %}
+  <meta name="description" content="{{ t(desc_key) }}">
+  <link rel="canonical" href="{{ canonical }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ app.name }}">
+  <meta property="og:title" content="{{ t(title_key) }}">
+  <meta property="og:description" content="{{ t(desc_key) }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <link rel="apple-touch-icon" href="/static/manifest/icon-192.png">
+  <link rel="stylesheet" href="/static/css/marketing.css">
+{% endmacro %}

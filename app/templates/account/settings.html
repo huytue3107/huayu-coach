@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% from "auth/_macros.html" import field with context %}
+{% block title %}{{ t('account.settings.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/auth.css">{% endblock %}
+{% block content %}
+<div class="stack">
+  <h1>{{ t('account.settings.title') }}</h1>
+
+  <section class="card stack" id="profile" aria-labelledby="s-profile">
+    <h2 id="s-profile">{{ t('account.settings.profile') }}</h2>
+    <form method="post" action="/settings" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <input type="hidden" name="section" value="profile">
+      <div class="field">
+        <label for="f-locale">{{ t('account.settings.language') }}</label>
+        <select id="f-locale" name="locale"{% if errors.locale %} aria-invalid="true" aria-describedby="e-locale"{% endif %}>
+          {% for code, name in languages %}<option value="{{ code }}" lang="{{ code }}"{% if form.locale == code %} selected{% endif %}>{{ name }}</option>{% endfor %}
+        </select>
+        {% if errors.locale %}<p class="error-text" id="e-locale" role="alert">{{ t(errors.locale, **limits) }}</p>{% endif %}
+      </div>
+      {{ field('display_name', t('account.settings.name'), value=form.display_name, autocomplete='nickname', required=False, maxlength=limits['max_name']) }}
+      <div class="field">
+        <label for="f-timezone">{{ t('account.settings.timezone') }}</label>
+        <select id="f-timezone" name="timezone" aria-describedby="h-timezone{% if errors.timezone %} e-timezone{% endif %}"{% if errors.timezone %} aria-invalid="true"{% endif %}>
+          {% for tz, key in zones %}<option value="{{ tz }}"{% if form.timezone == tz %} selected{% endif %}>{{ t('account.tz.' ~ key) if key else tz }}</option>{% endfor %}
+        </select>
+        <p class="hint" id="h-timezone">{{ t('account.settings.timezone_hint') }}</p>
+        {% if errors.timezone %}<p class="error-text" id="e-timezone" role="alert">{{ t(errors.timezone, **limits) }}</p>{% endif %}
+      </div>
+      <button class="btn btn-primary" type="submit">{{ t('account.settings.save') }}</button>
+    </form>
+  </section>
+
+  {% if user.role == 'learner' %}
+  <section class="card stack" aria-labelledby="s-links">
+    <h2 id="s-links">{{ t('account.settings.links_title') }}</h2>
+    <div class="shortcut-row">
+      <a class="btn btn-secondary" href="/plan">{{ t('account.settings.plan_link') }}</a>
+      <a class="btn btn-secondary" href="/billing">{{ t('account.settings.billing_link') }}</a>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="card stack" id="ai" aria-labelledby="s-ai">
+    <h2 id="s-ai">{{ t('account.settings.ai_title') }}</h2>
+    <p><span class="{{ 'badge ok' if llm_on else 'badge' }}">{{ t('account.settings.ai_on') if llm_on else t('account.settings.ai_off') }}</span></p>
+    <p class="hint">{{ t('account.settings.ai_note') }}{% if not llm_enabled %} {{ t('account.onboarding.llm_inactive') }}{% endif %}</p>
+    <form method="post" action="/settings/consent">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <input type="hidden" name="llm_transfer_agreed" value="{{ '0' if llm_on else '1' }}">
+      <button class="btn btn-secondary" type="submit">{{ t('account.settings.ai_turn_off') if llm_on else t('account.settings.ai_turn_on') }}</button>
+    </form>
+  </section>
+
+  <section class="card stack" id="password" aria-labelledby="s-password">
+    <h2 id="s-password">{{ t('account.settings.password_title') }}</h2>
+    <form method="post" action="/settings" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <input type="hidden" name="section" value="password">
+      {{ field('current_password', t('account.settings.current_password'), type='password', autocomplete='current-password', maxlength=limits['max_password']) }}
+      {{ field('new_password', t('account.settings.new_password'), type='password', autocomplete='new-password', maxlength=limits['max_password'], hint=t('auth.register.password_hint', min=limits['min'])) }}
+      {{ field('new_password2', t('account.settings.new_password2'), type='password', autocomplete='new-password', maxlength=limits['max_password']) }}
+      <p class="hint">{{ t('account.settings.password_hint') }}</p>
+      <button class="btn btn-primary" type="submit">{{ t('account.settings.password_submit') }}</button>
+    </form>
+  </section>
+
+  <section class="card stack" id="data" aria-labelledby="s-data">
+    <h2 id="s-data">{{ t('account.settings.data_title') }}</h2>
+    <p class="muted">{{ t('account.settings.data_hint') }}</p>
+    <p><a class="btn btn-secondary" href="/settings/export">{{ t('account.settings.export') }}</a></p>
+  </section>
+
+  <section class="card stack danger-zone" id="delete" aria-labelledby="s-delete">
+    <h2 id="s-delete">{{ t('account.settings.delete_title') }}</h2>
+    <p>{{ t('account.settings.delete_warning') }}</p>
+    {% if errors.delete %}<div class="flash flash-error" role="alert">{{ t(errors.delete, **limits) }}</div>{% endif %}
+    <form method="post" action="/settings/delete" class="stack">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      {{ field('password', t('account.settings.delete_password'), type='password', autocomplete='current-password', maxlength=limits['max_password']) }}
+      {{ field('confirm', t('account.settings.delete_confirm', word=limits['word']), autocomplete='off', maxlength=20) }}
+      <button class="btn btn-danger" type="submit">{{ t('account.settings.delete_submit') }}</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

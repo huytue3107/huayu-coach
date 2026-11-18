@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "learn/_macros.html" import fdate with context %}
+{% block title %}{{ t('learn.posttest.title') }} · {{ app.name }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/learn.css">{% endblock %}
+{% block content %}
+<section class="card soft stack">
+  <h1>{{ t('learn.posttest.locked_title') }}</h1>
+  <p>{{ t('learn.posttest.locked_body', date=fdate(opens)) }}</p>
+  <a class="btn btn-primary" href="/today">{{ t('learn.common.back_today') }}</a>
+</section>
+{% endblock %}
